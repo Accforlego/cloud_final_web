@@ -78,7 +78,7 @@ function renderCommentsList() {
     } else {
         commentsList.innerHTML = currentComments.map(c => {
             const pinButtonHtml = (isTeacher && !c.is_best_answer)
-                ? `<button type="button" class="button ghost" style="padding: 4px 8px; min-height: auto; font-size: 12px; margin-left: auto;" onclick="pinComment('${c.file_id}', ${c.timestamp})">📌 設為正解</button>`
+                ? `<button type="button" class="button ghost" style="padding: 4px 8px; min-height: auto; font-size: 12px; margin-left: auto;" onclick="pinComment('${c.file_id}', ${c.timestamp})">設為正解</button>`
                 : '';
 
             const unpinButtonHtml = (isTeacher && c.is_best_answer)
