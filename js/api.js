@@ -1,19 +1,23 @@
 async function api(path, options = {}) {
+    const authSession = JSON.parse(localStorage.getItem("examAuthSession") || "null");
+    const headers = {
+        "Content-Type": "application/json",
+        ...(authSession?.id_token ? { Authorization: `Bearer ${authSession.id_token}` } : {}),
+        ...(options.headers || {})
+    };
+
     const response = await fetch(
         APP_CONFIG.API_BASE_URL + path,
         {
-            headers: {
-                "Content-Type": "application/json",
-                ...(options.headers || {})
-            },
-            ...options
+            ...options,
+            headers
         }
     );
 
     const data = await response.json();
 
     if (!response.ok) {
-        throw new Error(data.message || "操作失敗");
+        throw new Error(data.message || "Request failed");
     }
 
     return data;
@@ -31,12 +35,12 @@ function setStatus(elementId, message, type = "") {
 }
 
 function formatCourseName(courseId) {
-    return COURSE_NAMES[courseId] || courseId || "未分類課程";
+    return COURSE_NAMES[courseId] || courseId || "Unknown course";
 }
 
 function formatDate(value) {
     if (!value) {
-        return "尚無時間";
+        return "Not available";
     }
 
     const date = new Date(value);

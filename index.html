@@ -3,65 +3,21 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>考古題管理系統</title>
+    <title>Exam Archive</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
 <body>
     <main class="home">
         <section class="hero-card">
             <p class="eyebrow">Exam Archive</p>
-            <h1>考古題管理系統</h1>
+            <h1>Exam Archive</h1>
             <p class="hero-text">
-                登入後即可查看自己課程的考古題，也可以上傳新的資料。
+                Sign in with Amazon Cognito to upload, review, and manage exam files.
             </p>
 
-            <div class="tabs">
-                <button type="button" class="tab is-active" id="loginTab">登入</button>
-                <button type="button" class="tab" id="registerTab">註冊</button>
-            </div>
-
-            <div class="form-grid" id="loginForm">
-                <label>
-                    使用者 ID
-                    <input id="loginUserId" type="text" placeholder="例如 student001">
-                </label>
-                <button type="button" class="button primary" id="loginBtn">登入</button>
-            </div>
-
-            <div class="form-grid" id="registerForm" hidden>
-                <label>
-                    使用者 ID
-                    <input id="regUserId" type="text" placeholder="例如 student001">
-                </label>
-
-                <label>
-                    姓名
-                    <input id="regName" type="text" placeholder="輸入姓名">
-                </label>
-
-                <label>
-                    Email
-                    <input id="regEmail" type="email" placeholder="輸入 Email">
-                </label>
-
-                <label>
-                    身分
-                    <select id="regRole">
-                        <option value="student">學生</option>
-                        <option value="teacher">教師</option>
-                        <option value="ta">助教</option>
-                    </select>
-                </label>
-
-                <label>
-                    課程
-                    <select id="regCourse">
-                        <option value="compiler">Compiler Design</option>
-                        <option value="os">Operating System</option>
-                    </select>
-                </label>
-
-                <button type="button" class="button primary" id="registerBtn">建立帳號</button>
+            <div class="form-grid">
+                <button type="button" class="button primary" id="loginBtn">Sign in</button>
+                <button type="button" class="button ghost" id="registerBtn">Create account</button>
             </div>
 
             <p class="status" id="authStatus"></p>
