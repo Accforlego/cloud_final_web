@@ -1,78 +1,55 @@
-let currentUser = JSON.parse(localStorage.getItem("examUser") || "null");
-
-function saveCurrentUser(user) {
-    currentUser = user;
-    localStorage.setItem("examUser", JSON.stringify(user));
+function base64UrlEncode(bytes) {
+    return btoa(String.fromCharCode(...bytes))
+        .replaceAll("+", "-")
+        .replaceAll("/", "_")
+        .replaceAll("=", "");
 }
 
-function switchAuthTab(mode) {
-    const isLogin = mode === "login";
-
-    document.getElementById("loginTab").classList.toggle("is-active", isLogin);
-    document.getElementById("registerTab").classList.toggle("is-active", !isLogin);
-    document.getElementById("loginForm").hidden = !isLogin;
-    document.getElementById("registerForm").hidden = isLogin;
-    setStatus("authStatus", "");
+async function sha256(value) {
+    const data = new TextEncoder().encode(value);
+    return new Uint8Array(await crypto.subtle.digest("SHA-256", data));
 }
 
-async function login() {
-    const userId = document.getElementById("loginUserId").value.trim();
+function createRandomString(length = 64) {
+    const bytes = new Uint8Array(length);
+    crypto.getRandomValues(bytes);
+    return base64UrlEncode(bytes);
+}
 
-    if (!userId) {
-        setStatus("authStatus", "請輸入使用者 ID。", "err");
+async function startHostedUiAuth(screen) {
+    if (
+        APP_CONFIG.COGNITO_DOMAIN.includes("YOUR_DOMAIN") ||
+        APP_CONFIG.COGNITO_CLIENT_ID.includes("YOUR_APP_CLIENT_ID")
+    ) {
+        setStatus("authStatus", "Please set Cognito values in js/config.js first.", "err");
         return;
     }
 
-    try {
-        const data = await api(
-            "/login",
-            {
-                method: "POST",
-                body: JSON.stringify({
-                    user_id: userId
-                })
-            }
-        );
+    const state = createRandomString(32);
+    const codeVerifier = createRandomString(64);
+    const codeChallenge = base64UrlEncode(await sha256(codeVerifier));
 
-        saveCurrentUser(data.user);
-        window.location.href = "myfiles.html";
-    } catch (error) {
-        setStatus("authStatus", error.message, "err");
-    }
-}
+    sessionStorage.setItem(
+        "examPkce",
+        JSON.stringify({
+            state,
+            codeVerifier
+        })
+    );
+    sessionStorage.setItem("examAuthIntent", screen);
 
-async function register() {
-    const userId = document.getElementById("regUserId").value.trim();
-    const name = document.getElementById("regName").value.trim();
-    const email = document.getElementById("regEmail").value.trim();
-    const role = document.getElementById("regRole").value;
-    const course = document.getElementById("regCourse").value;
+    const params = new URLSearchParams({
+        client_id: APP_CONFIG.COGNITO_CLIENT_ID,
+        response_type: "code",
+        scope: APP_CONFIG.COGNITO_SCOPES,
+        redirect_uri: APP_CONFIG.COGNITO_REDIRECT_URI,
+        state,
+        code_challenge: codeChallenge,
+        code_challenge_method: "S256"
+    });
 
-    if (!userId || !name || !email) {
-        setStatus("authStatus", "請完整填寫註冊資料。", "err");
-        return;
-    }
-
-    try {
-        const data = await api(
-            "/register",
-            {
-                method: "POST",
-                body: JSON.stringify({
-                    user_id: userId,
-                    name,
-                    email,
-                    role,
-                    courses: [course]
-                })
-            }
-        );
-
-        saveCurrentUser(data.user);
-        window.location.href = "myfiles.html";
-    } catch (error) {
-        setStatus("authStatus", error.message, "err");
-    }
+    const authPath = screen === "signup" ? "/signup" : "/login";
+    window.location.href = `${APP_CONFIG.COGNITO_DOMAIN}${authPath}?${params.toString()}`;
 }
 
 document.addEventListener("DOMContentLoaded", () => {
@@ -83,8 +60,6 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
-    document.getElementById("loginTab").addEventListener("click", () => switchAuthTab("login"));
-    document.getElementById("registerTab").addEventListener("click", () => switchAuthTab("register"));
-    document.getElementById("loginBtn").addEventListener("click", login);
-    document.getElementById("registerBtn").addEventListener("click", register);
+    document.getElementById("loginBtn").addEventListener("click", () => startHostedUiAuth("login"));
+    document.getElementById("registerBtn").addEventListener("click", () => startHostedUiAuth("signup"));
 });

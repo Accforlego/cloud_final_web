@@ -2,6 +2,10 @@ function getCurrentUser() {
     return JSON.parse(localStorage.getItem("examUser") || "null");
 }
 
+function hasCompleteProfile(user) {
+    return Boolean(user?.role && user?.courses?.length);
+}
+
 function requireLogin() {
     const user = getCurrentUser();
 
@@ -10,18 +14,37 @@ function requireLogin() {
         return null;
     }
 
+    const page = window.location.pathname.split("/").pop() || "index.html";
+
+    if (page !== "profile.html" && !hasCompleteProfile(user)) {
+        window.location.href = "profile.html";
+        return null;
+    }
+
     const currentUserText = document.getElementById("currentUserText");
 
     if (currentUserText) {
-        currentUserText.textContent = `${user.name}（${user.role}）`;
+        const roleLabel = ROLE_NAMES[user.role] || user.role;
+        currentUserText.textContent = roleLabel
+            ? `${user.name || user.email || user.user_id} (${roleLabel})`
+            : user.name || user.email || user.user_id;
     }
 
     return user;
 }
 
 function logout() {
+    const logoutUrl = new URL(`${APP_CONFIG.COGNITO_DOMAIN}/logout`);
+
     localStorage.removeItem("examUser");
-    window.location.href = "index.html";
+    localStorage.removeItem("examAuthSession");
+
+    logoutUrl.search = new URLSearchParams({
+        client_id: APP_CONFIG.COGNITO_CLIENT_ID,
+        logout_uri: APP_CONFIG.COGNITO_LOGOUT_URI
+    }).toString();
+
+    window.location.href = logoutUrl.toString();
 }
 
 document.addEventListener("DOMContentLoaded", () => {
