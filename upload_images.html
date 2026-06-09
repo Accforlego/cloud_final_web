@@ -3,137 +3,172 @@
 <head>
   <meta charset="utf-8">
   <meta name="viewport" content="width=device-width, initial-scale=1">
-  <title>手寫圖片產生器</title>
+  <title>上傳考古題與 OCR 確認</title>
   <style>
     :root {
       color-scheme: light;
       --ink: #161616;
       --paper: #fff;
-      --panel: #f5f7f8;
+      --panel: #f8fafc;
       --line: #d8dde2;
-      --accent: #1264a3;
-      --accent-dark: #0b4f83;
-      --text: #1d252d;
+      --accent: #2563eb;
+      --accent-dark: #1d4ed8;
+      --text: #172033;
+      --muted: #64748b;
+      --success: #059669;
+      --danger: #dc2626;
+      --warning: #d97706;
     }
 
-    * {
-      box-sizing: border-box;
-    }
+    * { box-sizing: border-box; }
 
     body {
       margin: 0;
       min-height: 100vh;
-      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", "Noto Sans TC", sans-serif;
       color: var(--text);
-      background: #eef2f4;
-      display: grid;
-      place-items: center;
-      padding: 24px;
+      background: #eef2f7;
+      padding: 22px;
     }
 
     main {
-      width: min(100%, 980px);
+      width: min(1180px, 100%);
+      margin: 0 auto;
       display: grid;
-      gap: 14px;
+      gap: 16px;
     }
 
-    .toolbar {
+    .topbar, .card {
+      background: #fff;
+      border: 1px solid var(--line);
+      border-radius: 18px;
+      box-shadow: 0 12px 32px rgba(15, 23, 42, 0.07);
+    }
+
+    .topbar {
       display: flex;
       align-items: center;
       justify-content: space-between;
-      gap: 12px;
-      padding: 12px;
-      background: var(--panel);
-      border: 1px solid var(--line);
-      border-radius: 8px;
+      gap: 14px;
+      padding: 16px;
     }
 
-    h1 {
-      margin: 0;
-      font-size: 20px;
-      line-height: 1.2;
-      font-weight: 700;
+    h1, h2, h3 { margin: 0; }
+    h1 { font-size: 22px; }
+    h2 { font-size: 18px; }
+    h3 { font-size: 15px; }
+
+    .hint { margin: 4px 0 0; color: var(--muted); font-size: 14px; line-height: 1.55; }
+
+    .grid {
+      display: grid;
+      grid-template-columns: 360px 1fr;
+      gap: 16px;
     }
 
-    .actions {
+    .card { padding: 16px; display: grid; gap: 14px; }
+
+    .user-summary {
       display: flex;
       align-items: center;
-      gap: 8px;
+      gap: 10px;
       flex-wrap: wrap;
       justify-content: flex-end;
     }
 
-    .mode-tabs {
-      display: flex;
-      gap: 8px;
-      flex-wrap: wrap;
+    .pill {
+      display: inline-flex;
+      align-items: center;
+      min-height: 28px;
+      padding: 0 10px;
+      border-radius: 999px;
+      background: #e0f2fe;
+      color: #075985;
+      font-size: 13px;
+      font-weight: 750;
     }
 
-    button {
-      min-height: 40px;
+    .pill.green { background: #dcfce7; color: #166534; }
+    .pill.gray { background: #f1f5f9; color: #475569; }
+    .pill.orange { background: #ffedd5; color: #9a3412; }
+
+    label { display: grid; gap: 7px; font-weight: 760; font-size: 14px; }
+
+    input, select, textarea {
+      width: 100%;
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 12px;
+      background: #fff;
+      color: var(--text);
+      font: inherit;
+    }
+
+    input, select { min-height: 44px; padding: 0 12px; }
+    textarea { min-height: 260px; padding: 12px; line-height: 1.6; resize: vertical; }
+
+    .btn {
+      min-height: 42px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
       background: #fff;
       color: var(--text);
       padding: 0 14px;
       font: inherit;
-      font-weight: 650;
+      font-weight: 800;
+      cursor: pointer;
+      text-decoration: none;
+      display: inline-flex;
+      align-items: center;
+      justify-content: center;
+      gap: 8px;
+    }
+
+    .btn.primary { border-color: var(--accent); background: var(--accent); color: #fff; }
+    .btn.primary:hover { background: var(--accent-dark); }
+    .btn.danger { border-color: #fecaca; background: #fef2f2; color: #991b1b; }
+    .btn:disabled { cursor: wait; opacity: 0.65; }
+
+    .actions { display: flex; flex-wrap: wrap; gap: 8px; align-items: center; }
+    .actions .btn { flex: 1 1 auto; }
+
+    .tabs {
+      display: grid;
+      grid-template-columns: repeat(3, 1fr);
+      gap: 8px;
+      padding: 4px;
+      background: #f1f5f9;
+      border-radius: 14px;
+    }
+
+    .tab-button {
+      border: 0;
+      border-radius: 11px;
+      background: transparent;
+      color: var(--muted);
+      min-height: 42px;
+      font-weight: 850;
       cursor: pointer;
     }
 
-    button:hover {
-      background: #f9fbfc;
-    }
-
-    button:disabled {
-      cursor: wait;
-      opacity: 0.7;
-    }
-
-    .primary {
-      border-color: var(--accent);
-      background: var(--accent);
-      color: #fff;
-    }
-
-    .primary:hover {
-      background: var(--accent-dark);
-    }
-
     .tab-button[aria-selected="true"] {
-      border-color: var(--accent);
-      background: #e8f2f8;
-      color: var(--accent-dark);
+      color: var(--accent);
+      background: #fff;
+      box-shadow: 0 6px 18px rgba(37, 99, 235, 0.12);
     }
 
-    .canvas-wrap,
-    .camera-wrap {
+    .page { display: grid; gap: 12px; }
+    .page[hidden] { display: none; }
+
+    .canvas-wrap, .preview-box {
       width: 100%;
       background: var(--paper);
       border: 1px solid var(--line);
-      border-radius: 8px;
+      border-radius: 14px;
       overflow: hidden;
-      box-shadow: 0 12px 28px rgba(28, 39, 49, 0.08);
+      box-shadow: 0 10px 24px rgba(28, 39, 49, 0.06);
     }
 
-    .page {
-      display: grid;
-      gap: 14px;
-    }
-
-    .page[hidden] {
-      display: none;
-    }
-
-    .canvas-wrap {
-      aspect-ratio: 4 / 3;
-    }
-
-    .camera-wrap {
-      display: grid;
-      gap: 10px;
-      padding: 10px;
-    }
+    .canvas-wrap { aspect-ratio: 4 / 3; }
 
     canvas {
       display: block;
@@ -144,128 +179,320 @@
       touch-action: none;
     }
 
-    .camera-preview {
+    .preview-box {
+      min-height: 220px;
+      display: grid;
+      place-items: center;
+      background: #f8fafc;
+      padding: 10px;
+    }
+
+    .preview-box img {
       display: block;
-      width: 100%;
-      aspect-ratio: 4 / 3;
-      background: #111;
-      border-radius: 6px;
+      max-width: 100%;
+      max-height: 360px;
+      border-radius: 10px;
       object-fit: contain;
+      background: #fff;
     }
 
-    .camera-actions {
-      display: flex;
-      gap: 8px;
-    }
-
-    .camera-actions button {
-      flex: 1 1 0;
-    }
-
-    .hint {
-      margin: 0;
-      color: #5f6b76;
+    .status {
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 14px;
+      background: #f8fafc;
+      color: var(--muted);
+      line-height: 1.6;
       font-size: 14px;
-      line-height: 1.5;
+      white-space: pre-wrap;
     }
 
-    @media (max-width: 640px) {
-      body {
-        padding: 14px;
-      }
+    .status.success { color: #065f46; background: #ecfdf5; border-color: #a7f3d0; }
+    .status.error { color: #991b1b; background: #fef2f2; border-color: #fecaca; }
+    .status.warning { color: #92400e; background: #fffbeb; border-color: #fed7aa; }
 
-      .toolbar {
-        align-items: flex-start;
-        flex-direction: column;
-      }
+    .ocr-panel {
+      display: grid;
+      gap: 12px;
+    }
 
-      .actions {
-        width: 100%;
-        justify-content: stretch;
-      }
+    .result-grid {
+      display: grid;
+      grid-template-columns: 1fr 1fr;
+      gap: 12px;
+    }
 
-      button {
-        flex: 1 1 120px;
-      }
+    .json-view {
+      min-height: 260px;
+      max-height: 420px;
+      overflow: auto;
+      padding: 12px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #0f172a;
+      color: #e2e8f0;
+      font-size: 13px;
+      line-height: 1.55;
+      white-space: pre-wrap;
+    }
 
-      .mode-tabs {
-        width: 100%;
-      }
+    .history-list { display: grid; gap: 8px; }
 
-      .mode-tabs button {
-        flex: 1 1 120px;
-      }
+    .history-item {
+      padding: 10px;
+      border: 1px solid var(--line);
+      border-radius: 12px;
+      background: #fff;
+      display: grid;
+      gap: 4px;
+      font-size: 14px;
+    }
+
+    .login-required {
+      width: min(520px, 100%);
+      margin: 12vh auto;
+      text-align: center;
+    }
+
+    @media (max-width: 940px) {
+      body { padding: 12px; }
+      .grid { grid-template-columns: 1fr; }
+      .topbar { align-items: flex-start; flex-direction: column; }
+      .user-summary { justify-content: flex-start; }
+      .result-grid { grid-template-columns: 1fr; }
     }
   </style>
 </head>
 <body>
-  <main>
-    <section class="toolbar" aria-label="工具列">
+  <main id="app" hidden>
+    <section class="topbar">
       <div>
-        <h1>手寫圖片產生器</h1>
-        <p class="hint" id="statusText">按住滑鼠左鍵開始書寫，放開左鍵收筆。</p>
+        <h1>上傳考古題 / 手寫答案</h1>
+        <p class="hint">先選課程與類型，再上傳到 S3。OCR 完成後可以確認並修正文字。</p>
       </div>
-      <div class="mode-tabs" role="tablist" aria-label="功能切換">
-        <button type="button" class="tab-button" id="handwritingTab" aria-selected="true" data-page="handwritingPage">手寫</button>
-        <button type="button" class="tab-button" id="cameraTab" aria-selected="false" data-page="cameraPage">拍照</button>
-      </div>
-    </section>
-
-    <section class="page" id="handwritingPage" aria-label="手寫頁面">
-      <div class="actions">
-        <button type="button" id="clearBtn">清除</button>
-        <button type="button" class="primary" id="finishBtn">完成並輸出圖片</button>
-      </div>
-      <div class="canvas-wrap">
-        <canvas id="drawingCanvas" width="1200" height="900" aria-label="空白手寫畫布"></canvas>
+      <div class="user-summary">
+        <span class="pill green" id="userNamePill">User</span>
+        <span class="pill" id="rolePill">role</span>
+        <a class="btn" href="index.html">回首頁</a>
+        <button class="btn danger" type="button" id="logoutBtn">登出</button>
       </div>
     </section>
 
-    <section class="page" id="cameraPage" aria-label="拍照頁面" hidden>
-      <div class="camera-wrap" aria-label="相機">
-        <img class="camera-preview" id="cameraPreview" alt="Picamera2 即時畫面">
-        <div class="camera-actions">
-          <button type="button" id="startCameraBtn">開啟相機</button>
-          <button type="button" class="primary" id="captureBtn" disabled>拍照</button>
+    <section class="grid">
+      <aside class="card">
+        <div>
+          <h2>上傳設定</h2>
+          <p class="hint">目前用登入者的課程權限限制可上傳/存取的課程。</p>
         </div>
+
+        <label>
+          課程
+          <select id="courseSelect"></select>
+        </label>
+
+        <label>
+          檔案類型
+          <select id="fileCategorySelect">
+            <option value="image">考古題圖片 image</option>
+            <option value="handwriting">手寫答案 handwriting</option>
+            <option value="pdf">PDF pdf（目前只上傳，不做 Rekognition OCR）</option>
+          </select>
+        </label>
+
+        <div class="status" id="statusBox">請選擇輸入方式並準備上傳。</div>
+
+        <div>
+          <h3>最近上傳紀錄</h3>
+          <p class="hint">Demo 版存在瀏覽器 localStorage；正式版應從 DynamoDB 查詢。</p>
+          <div class="history-list" id="historyList"></div>
+        </div>
+      </aside>
+
+      <section class="card">
+        <div class="tabs" role="tablist" aria-label="輸入方式">
+          <button type="button" class="tab-button" aria-selected="true" data-page="filePage">檔案上傳</button>
+          <button type="button" class="tab-button" aria-selected="false" data-page="handwritingPage">手寫板</button>
+          <button type="button" class="tab-button" aria-selected="false" data-page="cameraPage">相機拍照</button>
+        </div>
+
+        <section class="page" id="filePage">
+          <label>
+            選擇圖片或 PDF
+            <input type="file" id="fileInput" accept="image/png,image/jpeg,application/pdf">
+          </label>
+          <div class="preview-box" id="filePreviewBox">
+            <span class="hint">尚未選擇檔案</span>
+          </div>
+          <button type="button" class="btn primary" id="uploadFileBtn">上傳選擇的檔案</button>
+        </section>
+
+        <section class="page" id="handwritingPage" hidden>
+          <div class="actions">
+            <button type="button" class="btn" id="clearBtn">清除</button>
+            <button type="button" class="btn primary" id="uploadCanvasBtn">完成並上傳手寫圖片</button>
+          </div>
+          <div class="canvas-wrap">
+            <canvas id="drawingCanvas" width="1200" height="900" aria-label="空白手寫畫布"></canvas>
+          </div>
+        </section>
+
+        <section class="page" id="cameraPage" hidden>
+          <div class="actions">
+            <button type="button" class="btn" id="startCameraBtn">開啟相機</button>
+            <button type="button" class="btn primary" id="captureBtn" disabled>拍照並上傳</button>
+          </div>
+          <div class="preview-box">
+            <video id="cameraVideo" autoplay playsinline muted style="width:100%;max-height:360px;border-radius:10px;background:#111;"></video>
+          </div>
+        </section>
+      </section>
+    </section>
+
+    <section class="card ocr-panel" id="ocrPanel" hidden>
+      <div>
+        <h2>OCR 文字確認</h2>
+        <p class="hint">確認 Rekognition / OCR 產生的文字。如果辨識錯誤，可以直接在文字框修正後送出。</p>
+      </div>
+      <div class="result-grid">
+        <label>
+          可修改 OCR 文字
+          <textarea id="ocrTextArea" placeholder="OCR 結果會出現在這裡"></textarea>
+        </label>
+        <div>
+          <strong>原始 JSON</strong>
+          <pre class="json-view" id="jsonView">{}</pre>
+        </div>
+      </div>
+      <div class="actions">
+        <button type="button" class="btn primary" id="confirmOcrBtn">確認文字正確 / 儲存修正版</button>
+        <button type="button" class="btn" id="copyTextBtn">複製文字</button>
       </div>
     </section>
   </main>
 
+  <section class="card login-required" id="loginRequired" hidden>
+    <h1>需要先登入</h1>
+    <p class="hint">請先登入或註冊，系統才知道你的 user_id、role 和可存取課程。</p>
+    <a class="btn primary" href="index.html">前往登入</a>
+  </section>
+
   <script>
+    // 之後接 API Gateway 時，把這裡改成你的 API Gateway base URL。
+    // 例如：const API_BASE_URL = "https://xxxx.execute-api.ap-southeast-2.amazonaws.com/prod";
+    // 保持空字串時會跑 Demo 模式，不會真的上傳 S3。
+    const API_BASE_URL = "";
+
+    const COURSES = [
+      { id: "compiler", name: "Compiler Design" },
+      { id: "os", name: "Operating System" },
+      { id: "network", name: "Computer Networks" },
+      { id: "algorithm", name: "Algorithms" }
+    ];
+
+    const STORAGE_KEYS = {
+      currentUser: "examSystemCurrentUser",
+      history: "examSystemUploadHistory"
+    };
+
+    const app = document.querySelector("#app");
+    const loginRequired = document.querySelector("#loginRequired");
+    const statusBox = document.querySelector("#statusBox");
+    const courseSelect = document.querySelector("#courseSelect");
+    const fileCategorySelect = document.querySelector("#fileCategorySelect");
+    const fileInput = document.querySelector("#fileInput");
+    const filePreviewBox = document.querySelector("#filePreviewBox");
+    const uploadFileBtn = document.querySelector("#uploadFileBtn");
+    const uploadCanvasBtn = document.querySelector("#uploadCanvasBtn");
+    const clearBtn = document.querySelector("#clearBtn");
     const canvas = document.querySelector("#drawingCanvas");
     const ctx = canvas.getContext("2d");
-    const finishBtn = document.querySelector("#finishBtn");
-    const clearBtn = document.querySelector("#clearBtn");
-    const statusText = document.querySelector("#statusText");
-    const cameraPreview = document.querySelector("#cameraPreview");
     const startCameraBtn = document.querySelector("#startCameraBtn");
     const captureBtn = document.querySelector("#captureBtn");
-    const tabButtons = document.querySelectorAll(".tab-button");
-    const pages = document.querySelectorAll(".page");
+    const cameraVideo = document.querySelector("#cameraVideo");
+    const ocrPanel = document.querySelector("#ocrPanel");
+    const ocrTextArea = document.querySelector("#ocrTextArea");
+    const jsonView = document.querySelector("#jsonView");
+    const confirmOcrBtn = document.querySelector("#confirmOcrBtn");
+    const copyTextBtn = document.querySelector("#copyTextBtn");
+    const historyList = document.querySelector("#historyList");
 
+    let currentUser = null;
+    let currentOcrResult = null;
+    let selectedFile = null;
     let isDrawing = false;
-    let lastPoint = null;
-    let isCameraOpen = false;
+    let cameraStream = null;
 
-    function setStatus(message) {
-      statusText.textContent = message;
+    function getCurrentUser() {
+      const raw = localStorage.getItem(STORAGE_KEYS.currentUser);
+      if (!raw) return null;
+      try { return JSON.parse(raw); } catch { return null; }
     }
 
-    function switchPage(pageId) {
-      pages.forEach((page) => {
-        page.hidden = page.id !== pageId;
-      });
+    function setStatus(message, type = "") {
+      statusBox.className = `status ${type}`.trim();
+      statusBox.textContent = message;
+    }
 
-      tabButtons.forEach((button) => {
-        button.setAttribute("aria-selected", String(button.dataset.page === pageId));
-      });
+    function getCourseName(courseId) {
+      return COURSES.find((course) => course.id === courseId)?.name || courseId;
+    }
 
-      if (pageId === "handwritingPage") {
-        setStatus("按住滑鼠左鍵開始書寫，放開左鍵收筆。");
-      } else {
-        setStatus("按開啟相機後，可以拍照儲存 JPG。");
+    function getHistory() {
+      const raw = localStorage.getItem(STORAGE_KEYS.history);
+      if (!raw) return [];
+      try { return JSON.parse(raw); } catch { return []; }
+    }
+
+    function saveHistoryItem(item) {
+      const history = getHistory();
+      history.unshift(item);
+      localStorage.setItem(STORAGE_KEYS.history, JSON.stringify(history.slice(0, 8)));
+      renderHistory();
+    }
+
+    function renderHistory() {
+      const history = getHistory().filter((item) => item.user_id === currentUser.user_id);
+      if (history.length === 0) {
+        historyList.innerHTML = `<div class="hint">尚無上傳紀錄</div>`;
+        return;
       }
+      historyList.innerHTML = history.map((item) => `
+        <div class="history-item">
+          <strong>${item.filename}</strong>
+          <span class="hint">${getCourseName(item.course)}｜${item.file_category}｜${item.status}</span>
+        </div>
+      `).join("");
+    }
+
+    function renderUser() {
+      currentUser = getCurrentUser();
+      if (!currentUser) {
+        app.hidden = true;
+        loginRequired.hidden = false;
+        return;
+      }
+
+      app.hidden = false;
+      loginRequired.hidden = true;
+      document.querySelector("#userNamePill").textContent = currentUser.name;
+      document.querySelector("#rolePill").textContent = currentUser.role;
+
+      courseSelect.innerHTML = currentUser.courses.map((courseId) => `
+        <option value="${courseId}">${getCourseName(courseId)}</option>
+      `).join("");
+
+      renderHistory();
+    }
+
+    function setupTabs() {
+      const tabs = document.querySelectorAll(".tab-button");
+      const pages = document.querySelectorAll(".page");
+      tabs.forEach((tab) => {
+        tab.addEventListener("click", () => {
+          tabs.forEach((btn) => btn.setAttribute("aria-selected", String(btn === tab)));
+          pages.forEach((page) => { page.hidden = page.id !== tab.dataset.page; });
+        });
+      });
     }
 
     function setupBrush() {
@@ -275,19 +502,10 @@
       ctx.lineJoin = "round";
     }
 
-    function fillPaper() {
-      ctx.save();
-      ctx.globalCompositeOperation = "destination-over";
-      ctx.fillStyle = "#fff";
-      ctx.fillRect(0, 0, canvas.width, canvas.height);
-      ctx.restore();
-    }
-
     function getCanvasPoint(event) {
       const rect = canvas.getBoundingClientRect();
       const scaleX = canvas.width / rect.width;
       const scaleY = canvas.height / rect.height;
-
       return {
         x: (event.clientX - rect.left) * scaleX,
         y: (event.clientY - rect.top) * scaleY
@@ -296,27 +514,22 @@
 
     function startDrawing(event) {
       if (event.button !== 0) return;
-
       isDrawing = true;
-      lastPoint = getCanvasPoint(event);
+      const point = getCanvasPoint(event);
       ctx.beginPath();
-      ctx.moveTo(lastPoint.x, lastPoint.y);
+      ctx.moveTo(point.x, point.y);
     }
 
     function draw(event) {
       if (!isDrawing) return;
-
       const point = getCanvasPoint(event);
       ctx.lineTo(point.x, point.y);
       ctx.stroke();
-      lastPoint = point;
     }
 
     function stopDrawing() {
       if (!isDrawing) return;
-
       isDrawing = false;
-      lastPoint = null;
       ctx.closePath();
     }
 
@@ -325,109 +538,245 @@
       setupBrush();
     }
 
-    async function saveCanvasImage() {
-      fillPaper();
+    function canvasToBlob() {
+      ctx.save();
+      ctx.globalCompositeOperation = "destination-over";
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
       setupBrush();
-
-      finishBtn.disabled = true;
-      setStatus("正在儲存圖片...");
-
-      try {
-        const response = await fetch("/save", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json"
-          },
-          body: JSON.stringify({
-            image: canvas.toDataURL("image/png")
-          })
-        });
-
-        if (!response.ok) {
-          throw new Error("save failed");
-        }
-
-        const result = await response.json();
-        setStatus(`已儲存到 ${result.path}，並上傳到 S3。`);
-      } catch (error) {
-        setStatus("儲存或 S3 上傳失敗，請確認 server 與 AWS 設定。");
-      } finally {
-        finishBtn.disabled = false;
-      }
+      return new Promise((resolve) => canvas.toBlob(resolve, "image/png"));
     }
 
-    function startCamera() {
-      startCameraBtn.disabled = true;
-      isCameraOpen = false;
-      setStatus("正在開啟 Picamera2...");
-
-      cameraPreview.onload = () => {
-        isCameraOpen = true;
-        captureBtn.disabled = false;
-        startCameraBtn.disabled = false;
-        startCameraBtn.textContent = "重新整理相機";
-        setStatus("Picamera2 已開啟，可以拍照。");
-      };
-
-      cameraPreview.onerror = () => {
-        isCameraOpen = false;
-        captureBtn.disabled = true;
-        startCameraBtn.disabled = false;
-        setStatus("無法開啟 Picamera2，請確認相機已啟用且 server 有權限使用相機。");
-      };
-
-      window.setTimeout(() => {
-        if (!isCameraOpen) {
-          captureBtn.disabled = true;
-          startCameraBtn.disabled = false;
-          setStatus("Picamera2 開啟逾時，請檢查相機連線或 server log。");
-        }
-      }, 10000);
-
-      cameraPreview.src = `/camera-stream?ts=${Date.now()}`;
-    }
-
-    async function capturePhoto() {
-      if (!isCameraOpen) {
-        setStatus("請先開啟 Picamera2。");
+    fileInput.addEventListener("change", () => {
+      selectedFile = fileInput.files?.[0] || null;
+      if (!selectedFile) {
+        filePreviewBox.innerHTML = `<span class="hint">尚未選擇檔案</span>`;
         return;
       }
 
-      captureBtn.disabled = true;
-      setStatus("正在拍照並儲存照片...");
+      const isImage = selectedFile.type.startsWith("image/");
+      if (isImage) {
+        const url = URL.createObjectURL(selectedFile);
+        filePreviewBox.innerHTML = `<img src="${url}" alt="檔案預覽">`;
+      } else {
+        filePreviewBox.innerHTML = `<span class="hint">已選擇：${selectedFile.name}</span>`;
+      }
 
+      if (selectedFile.type === "application/pdf") {
+        fileCategorySelect.value = "pdf";
+      } else if (fileCategorySelect.value === "pdf") {
+        fileCategorySelect.value = "image";
+      }
+    });
+
+    async function startCamera() {
       try {
-        const response = await fetch("/save-photo", {
-          method: "POST"
-        });
-
-        if (!response.ok) {
-          throw new Error("photo save failed");
-        }
-
-        const result = await response.json();
-        setStatus(`已儲存照片到 ${result.path}，並上傳到 S3。`);
-      } catch (error) {
-        setStatus("照片儲存或 S3 上傳失敗，請確認 Picamera2、server 與 AWS 設定。");
-      } finally {
-        startCameraBtn.disabled = false;
+        cameraStream = await navigator.mediaDevices.getUserMedia({ video: true, audio: false });
+        cameraVideo.srcObject = cameraStream;
         captureBtn.disabled = false;
+        setStatus("相機已開啟，可以拍照。", "success");
+      } catch (error) {
+        setStatus("無法開啟瀏覽器相機，請確認權限或改用檔案上傳。", "error");
       }
     }
 
-    setupBrush();
+    async function captureCameraBlob() {
+      const temp = document.createElement("canvas");
+      temp.width = cameraVideo.videoWidth || 1280;
+      temp.height = cameraVideo.videoHeight || 720;
+      temp.getContext("2d").drawImage(cameraVideo, 0, 0, temp.width, temp.height);
+      return new Promise((resolve) => temp.toBlob(resolve, "image/png"));
+    }
+
+    function buildS3Key(fileCategory, course, userId, filename) {
+      const safeName = filename.replace(/[^a-zA-Z0-9._-]/g, "_");
+      return `uploads/raw/${fileCategory}/${course}/${userId}/${Date.now()}_${safeName}`;
+    }
+
+    function mockOcrText(fileCategory, filename) {
+      if (fileCategory === "pdf") {
+        return "PDF uploaded successfully. Rekognition does not support PDF OCR in this demo.";
+      }
+      return `Question 1. Explain TCP three-way handshake.\nQuestion 2. What is the difference between process and thread?\n\n[Demo OCR result for ${filename}]`;
+    }
+
+    async function uploadWithApi(blob, filename, contentType, fileCategory) {
+      const course = courseSelect.value;
+      const userId = currentUser.user_id;
+      const s3Key = buildS3Key(fileCategory, course, userId, filename);
+
+      if (!API_BASE_URL) {
+        await new Promise((resolve) => setTimeout(resolve, 700));
+        const result = {
+          file_id: `demo-${Date.now()}`,
+          filename,
+          file_category: fileCategory,
+          course,
+          uploaded_by: userId,
+          original_s3_key: s3Key,
+          status: fileCategory === "pdf" ? "pdf_uploaded_no_ocr" : "processed",
+          ocr_engine: fileCategory === "pdf" ? "none" : "Demo Rekognition Mock",
+          ocr_text: mockOcrText(fileCategory, filename),
+          created_at: new Date().toISOString()
+        };
+        return result;
+      }
+
+      const presignResponse = await fetch(`${API_BASE_URL}/upload-url`, {
+        method: "POST",
+        headers: { "Content-Type": "application/json" },
+        body: JSON.stringify({
+          user_id: userId,
+          role: currentUser.role,
+          course,
+          file_category: fileCategory,
+          filename,
+          content_type: contentType,
+          s3_key: s3Key
+        })
+      });
+
+      if (!presignResponse.ok) throw new Error("無法取得上傳 URL");
+      const presignData = await presignResponse.json();
+
+      const uploadResponse = await fetch(presignData.upload_url, {
+        method: "PUT",
+        headers: { "Content-Type": contentType },
+        body: blob
+      });
+
+      if (!uploadResponse.ok) throw new Error("S3 上傳失敗");
+
+      return await pollOcrResult(presignData.file_id || presignData.s3_key || s3Key);
+    }
+
+    async function pollOcrResult(fileIdOrKey) {
+      setStatus("已上傳 S3，正在等待 OCR 結果...", "warning");
+      for (let i = 0; i < 10; i += 1) {
+        await new Promise((resolve) => setTimeout(resolve, 2000));
+        const response = await fetch(`${API_BASE_URL}/ocr-result?id=${encodeURIComponent(fileIdOrKey)}`);
+        if (!response.ok) continue;
+        const data = await response.json();
+        if (data.status && data.status !== "processing") return data;
+      }
+      throw new Error("等待 OCR 結果逾時，請稍後到 DynamoDB / S3 檢查。");
+    }
+
+    async function handleUpload(blob, filename, contentType, fileCategory) {
+      if (!currentUser.courses.includes(courseSelect.value)) {
+        setStatus("你沒有這門課的權限，不能上傳或存取。", "error");
+        return;
+      }
+
+      setStatus("正在上傳...", "warning");
+      disableButtons(true);
+
+      try {
+        const result = await uploadWithApi(blob, filename, contentType, fileCategory);
+        currentOcrResult = result;
+        showOcrResult(result);
+        saveHistoryItem({
+          user_id: currentUser.user_id,
+          filename: result.filename || filename,
+          file_category: result.file_category || fileCategory,
+          course: result.course || courseSelect.value,
+          status: result.status || "processed"
+        });
+        setStatus("上傳完成，請確認 OCR 文字。", "success");
+      } catch (error) {
+        setStatus(`上傳或 OCR 失敗：${error.message}`, "error");
+      } finally {
+        disableButtons(false);
+      }
+    }
+
+    function showOcrResult(result) {
+      ocrPanel.hidden = false;
+      ocrTextArea.value = result.ocr_text || "";
+      jsonView.textContent = JSON.stringify(result, null, 2);
+      ocrPanel.scrollIntoView({ behavior: "smooth", block: "start" });
+    }
+
+    function disableButtons(disabled) {
+      uploadFileBtn.disabled = disabled;
+      uploadCanvasBtn.disabled = disabled;
+      captureBtn.disabled = disabled && !cameraStream;
+      confirmOcrBtn.disabled = disabled;
+    }
+
+    uploadFileBtn.addEventListener("click", async () => {
+      if (!selectedFile) {
+        setStatus("請先選擇檔案。", "error");
+        return;
+      }
+      const category = selectedFile.type === "application/pdf" ? "pdf" : fileCategorySelect.value;
+      await handleUpload(selectedFile, selectedFile.name, selectedFile.type || "application/octet-stream", category);
+    });
+
+    uploadCanvasBtn.addEventListener("click", async () => {
+      fileCategorySelect.value = "handwriting";
+      const blob = await canvasToBlob();
+      await handleUpload(blob, "handwriting.png", "image/png", "handwriting");
+    });
+
+    startCameraBtn.addEventListener("click", startCamera);
+    captureBtn.addEventListener("click", async () => {
+      fileCategorySelect.value = "image";
+      const blob = await captureCameraBlob();
+      await handleUpload(blob, "camera_capture.png", "image/png", "image");
+    });
+
+    confirmOcrBtn.addEventListener("click", async () => {
+      if (!currentOcrResult) return;
+      const correctedText = ocrTextArea.value;
+      setStatus("正在儲存修正後文字...", "warning");
+
+      try {
+        if (API_BASE_URL) {
+          const response = await fetch(`${API_BASE_URL}/confirm-ocr`, {
+            method: "POST",
+            headers: { "Content-Type": "application/json" },
+            body: JSON.stringify({
+              file_id: currentOcrResult.file_id,
+              user_id: currentUser.user_id,
+              course: currentOcrResult.course || courseSelect.value,
+              corrected_text: correctedText
+            })
+          });
+          if (!response.ok) throw new Error("confirm-ocr failed");
+        } else {
+          currentOcrResult.corrected_text = correctedText;
+          currentOcrResult.confirmed_by = currentUser.user_id;
+          currentOcrResult.confirmed_at = new Date().toISOString();
+          jsonView.textContent = JSON.stringify(currentOcrResult, null, 2);
+          await new Promise((resolve) => setTimeout(resolve, 400));
+        }
+        setStatus("文字已確認並儲存。", "success");
+      } catch (error) {
+        setStatus("儲存修正版文字失敗，請檢查 API。", "error");
+      }
+    });
+
+    copyTextBtn.addEventListener("click", async () => {
+      await navigator.clipboard.writeText(ocrTextArea.value);
+      setStatus("已複製 OCR 文字。", "success");
+    });
+
+    document.querySelector("#logoutBtn").addEventListener("click", () => {
+      localStorage.removeItem(STORAGE_KEYS.currentUser);
+      location.href = "index.html";
+    });
 
     canvas.addEventListener("mousedown", startDrawing);
     canvas.addEventListener("mousemove", draw);
     window.addEventListener("mouseup", stopDrawing);
     canvas.addEventListener("mouseleave", stopDrawing);
     clearBtn.addEventListener("click", clearCanvas);
-    finishBtn.addEventListener("click", saveCanvasImage);
-    startCameraBtn.addEventListener("click", startCamera);
-    captureBtn.addEventListener("click", capturePhoto);
-    tabButtons.forEach((button) => {
-      button.addEventListener("click", () => switchPage(button.dataset.page));
-    });
+
+    setupTabs();
+    setupBrush();
+    renderUser();
   </script>
 </body>
 </html>
