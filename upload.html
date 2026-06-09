@@ -1,0 +1,123 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>上傳考古題</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <main class="app-shell">
+        <header class="app-header">
+            <div>
+                <p class="eyebrow">Exam Archive</p>
+                <h1>上傳考古題</h1>
+            </div>
+            <div class="user-bar">
+                <span id="currentUserText">尚未登入</span>
+                <button type="button" class="ghost" id="logoutBtn" hidden>登出</button>
+            </div>
+        </header>
+
+        <section class="panel" id="authPanel">
+            <div class="tabs">
+                <button type="button" class="tab is-active" id="loginTab">登入</button>
+                <button type="button" class="tab" id="registerTab">註冊</button>
+            </div>
+
+            <div class="form-grid" id="loginForm">
+                <label>
+                    使用者 ID
+                    <input id="loginUserId" type="text" placeholder="例如 student001">
+                </label>
+                <button type="button" class="button primary" id="loginBtn">登入</button>
+            </div>
+
+            <div class="form-grid" id="registerForm" hidden>
+                <label>
+                    使用者 ID
+                    <input id="regUserId" type="text" placeholder="例如 student001">
+                </label>
+                <label>
+                    姓名
+                    <input id="regName" type="text" placeholder="輸入姓名">
+                </label>
+                <label>
+                    Email
+                    <input id="regEmail" type="email" placeholder="輸入 Email">
+                </label>
+                <label>
+                    身分
+                    <select id="regRole">
+                        <option value="student">學生</option>
+                        <option value="teacher">教師</option>
+                        <option value="ta">助教</option>
+                    </select>
+                </label>
+                <label>
+                    課程
+                    <select id="regCourse">
+                        <option value="compiler">Compiler Design</option>
+                        <option value="os">Operating System</option>
+                    </select>
+                </label>
+                <button type="button" class="button primary" id="registerBtn">建立帳號</button>
+            </div>
+
+            <p class="status" id="authStatus"></p>
+        </section>
+
+        <section class="panel" id="uploadPanel" hidden>
+            <h2>選擇上傳內容</h2>
+
+            <div class="form-grid two-columns">
+                <label>
+                    課程
+                    <select id="courseSelect"></select>
+                </label>
+
+                <label>
+                    類型
+                    <select id="fileCategory">
+                        <option value="image">圖片</option>
+                        <option value="handwriting">手寫答案</option>
+                        <option value="pdf">PDF</option>
+                    </select>
+                </label>
+            </div>
+
+            <div class="upload-box">
+                <input id="fileInput" type="file" accept=".png,.jpg,.jpeg,.pdf">
+                <p id="fileName">尚未選擇檔案</p>
+            </div>
+
+            <button type="button" class="button primary" id="uploadBtn">上傳並辨識</button>
+            <p class="status" id="uploadStatus"></p>
+        </section>
+
+        <section class="panel" id="reviewPanel" hidden>
+            <div class="review-header">
+                <div>
+                    <h2>確認文字內容</h2>
+                    <p>你可以直接修改辨識結果，確認後會儲存為正式文字。</p>
+                </div>
+                <span class="badge" id="reviewBadge">等待結果</span>
+            </div>
+
+            <textarea id="correctedText" rows="12" placeholder="辨識結果會顯示在這裡"></textarea>
+
+            <div class="actions-row">
+                <button type="button" class="button ghost" id="refreshOcrBtn">重新整理</button>
+                <button type="button" class="button primary" id="confirmBtn">確認儲存</button>
+            </div>
+
+            <p class="status" id="reviewStatus"></p>
+        </section>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/auth.js"></script>
+    <script src="js/upload.js"></script>
+</body>
+</html>
