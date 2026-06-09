@@ -36,6 +36,7 @@ async function startHostedUiAuth(screen) {
             codeVerifier
         })
     );
+    sessionStorage.setItem("examAuthIntent", screen);
 
     const params = new URLSearchParams({
         client_id: APP_CONFIG.COGNITO_CLIENT_ID,

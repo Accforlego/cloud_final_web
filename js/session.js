@@ -2,6 +2,10 @@ function getCurrentUser() {
     return JSON.parse(localStorage.getItem("examUser") || "null");
 }
 
+function hasCompleteProfile(user) {
+    return Boolean(user?.role && user?.courses?.length);
+}
+
 function requireLogin() {
     const user = getCurrentUser();
 
@@ -10,10 +14,20 @@ function requireLogin() {
         return null;
     }
 
+    const page = window.location.pathname.split("/").pop() || "index.html";
+
+    if (page !== "profile.html" && !hasCompleteProfile(user)) {
+        window.location.href = "profile.html";
+        return null;
+    }
+
     const currentUserText = document.getElementById("currentUserText");
 
     if (currentUserText) {
-        currentUserText.textContent = user.name || user.email || user.user_id;
+        const roleLabel = ROLE_NAMES[user.role] || user.role;
+        currentUserText.textContent = roleLabel
+            ? `${user.name || user.email || user.user_id} (${roleLabel})`
+            : user.name || user.email || user.user_id;
     }
 
     return user;

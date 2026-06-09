@@ -14,17 +14,26 @@ function decodeJwtPayload(token) {
 
 function saveAuthSession(tokens) {
     const claims = decodeJwtPayload(tokens.id_token);
+    const savedProfile = JSON.parse(localStorage.getItem(`examProfile:${claims.sub}`) || "null");
     const user = {
         user_id: claims.sub,
         sub: claims.sub,
         name: claims.name || claims.email || claims["cognito:username"],
         email: claims.email || "",
-        role: claims["custom:role"] || "student",
-        courses: claims["custom:courses"] ? claims["custom:courses"].split(",") : ["compiler", "os"]
+        role: claims["custom:role"] || savedProfile?.role || "",
+        courses: claims["custom:courses"]
+            ? claims["custom:courses"].split(",")
+            : savedProfile?.courses || []
     };
 
     localStorage.setItem("examAuthSession", JSON.stringify(tokens));
     localStorage.setItem("examUser", JSON.stringify(user));
+
+    return user;
+}
+
+function hasCompleteProfile(user) {
+    return Boolean(user?.role && user?.courses?.length);
 }
 
 async function exchangeCodeForTokens(code, codeVerifier) {
@@ -75,9 +84,14 @@ async function handleCallback() {
     }
 
     const tokens = await exchangeCodeForTokens(code, pkce.codeVerifier);
+    const authIntent = sessionStorage.getItem("examAuthIntent");
     sessionStorage.removeItem("examPkce");
-    saveAuthSession(tokens);
-    window.location.href = "myfiles.html";
+    sessionStorage.removeItem("examAuthIntent");
+
+    const user = saveAuthSession(tokens);
+    window.location.href = authIntent === "signup" || !hasCompleteProfile(user)
+        ? "profile.html"
+        : "myfiles.html";
 }
 
 document.addEventListener("DOMContentLoaded", async () => {

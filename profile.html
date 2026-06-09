@@ -1,0 +1,52 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>Complete Profile</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <main class="home">
+        <section class="hero-card">
+            <p class="eyebrow">Exam Archive</p>
+            <h1>Complete profile</h1>
+            <p class="hero-text">
+                Select your role and courses before entering the archive.
+            </p>
+
+            <div class="form-grid">
+                <label>
+                    身分
+                    <select id="roleSelect">
+                        <option value="teacher">老師</option>
+                        <option value="ta">助教</option>
+                        <option value="student">學生</option>
+                    </select>
+                </label>
+
+                <fieldset class="choice-group">
+                    <legend>修習的課程</legend>
+                    <label class="choice-row">
+                        <input type="checkbox" name="course" value="compiler">
+                        <span>Compiler Design</span>
+                    </label>
+                    <label class="choice-row">
+                        <input type="checkbox" name="course" value="os">
+                        <span>Operating System</span>
+                    </label>
+                </fieldset>
+
+                <button type="button" class="button primary" id="saveProfileBtn">Continue</button>
+            </div>
+
+            <p class="status" id="profileStatus"></p>
+        </section>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/session.js"></script>
+    <script src="js/profile.js"></script>
+</body>
+</html>
