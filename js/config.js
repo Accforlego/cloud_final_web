@@ -1,5 +1,5 @@
 const APP_CONFIG = {
-    API_BASE_URL: "https://cj7zdm4z38.execute-api.ap-southeast-2.amazonaws.com",
+    API_BASE_URL: "https://xl9llcfw6d.execute-api.ap-southeast-2.amazonaws.com/prod",
 
     // Replace these values after creating the Cognito User Pool app client.
     COGNITO_DOMAIN: "https://ap-southeast-2mcs3uji9u.auth.ap-southeast-2.amazoncognito.com",
