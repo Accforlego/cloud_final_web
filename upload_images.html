@@ -1,0 +1,433 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <title>手寫圖片產生器</title>
+  <style>
+    :root {
+      color-scheme: light;
+      --ink: #161616;
+      --paper: #fff;
+      --panel: #f5f7f8;
+      --line: #d8dde2;
+      --accent: #1264a3;
+      --accent-dark: #0b4f83;
+      --text: #1d252d;
+    }
+
+    * {
+      box-sizing: border-box;
+    }
+
+    body {
+      margin: 0;
+      min-height: 100vh;
+      font-family: system-ui, -apple-system, BlinkMacSystemFont, "Segoe UI", sans-serif;
+      color: var(--text);
+      background: #eef2f4;
+      display: grid;
+      place-items: center;
+      padding: 24px;
+    }
+
+    main {
+      width: min(100%, 980px);
+      display: grid;
+      gap: 14px;
+    }
+
+    .toolbar {
+      display: flex;
+      align-items: center;
+      justify-content: space-between;
+      gap: 12px;
+      padding: 12px;
+      background: var(--panel);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+    }
+
+    h1 {
+      margin: 0;
+      font-size: 20px;
+      line-height: 1.2;
+      font-weight: 700;
+    }
+
+    .actions {
+      display: flex;
+      align-items: center;
+      gap: 8px;
+      flex-wrap: wrap;
+      justify-content: flex-end;
+    }
+
+    .mode-tabs {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+    }
+
+    button {
+      min-height: 40px;
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      background: #fff;
+      color: var(--text);
+      padding: 0 14px;
+      font: inherit;
+      font-weight: 650;
+      cursor: pointer;
+    }
+
+    button:hover {
+      background: #f9fbfc;
+    }
+
+    button:disabled {
+      cursor: wait;
+      opacity: 0.7;
+    }
+
+    .primary {
+      border-color: var(--accent);
+      background: var(--accent);
+      color: #fff;
+    }
+
+    .primary:hover {
+      background: var(--accent-dark);
+    }
+
+    .tab-button[aria-selected="true"] {
+      border-color: var(--accent);
+      background: #e8f2f8;
+      color: var(--accent-dark);
+    }
+
+    .canvas-wrap,
+    .camera-wrap {
+      width: 100%;
+      background: var(--paper);
+      border: 1px solid var(--line);
+      border-radius: 8px;
+      overflow: hidden;
+      box-shadow: 0 12px 28px rgba(28, 39, 49, 0.08);
+    }
+
+    .page {
+      display: grid;
+      gap: 14px;
+    }
+
+    .page[hidden] {
+      display: none;
+    }
+
+    .canvas-wrap {
+      aspect-ratio: 4 / 3;
+    }
+
+    .camera-wrap {
+      display: grid;
+      gap: 10px;
+      padding: 10px;
+    }
+
+    canvas {
+      display: block;
+      width: 100%;
+      height: 100%;
+      background: var(--paper);
+      cursor: crosshair;
+      touch-action: none;
+    }
+
+    .camera-preview {
+      display: block;
+      width: 100%;
+      aspect-ratio: 4 / 3;
+      background: #111;
+      border-radius: 6px;
+      object-fit: contain;
+    }
+
+    .camera-actions {
+      display: flex;
+      gap: 8px;
+    }
+
+    .camera-actions button {
+      flex: 1 1 0;
+    }
+
+    .hint {
+      margin: 0;
+      color: #5f6b76;
+      font-size: 14px;
+      line-height: 1.5;
+    }
+
+    @media (max-width: 640px) {
+      body {
+        padding: 14px;
+      }
+
+      .toolbar {
+        align-items: flex-start;
+        flex-direction: column;
+      }
+
+      .actions {
+        width: 100%;
+        justify-content: stretch;
+      }
+
+      button {
+        flex: 1 1 120px;
+      }
+
+      .mode-tabs {
+        width: 100%;
+      }
+
+      .mode-tabs button {
+        flex: 1 1 120px;
+      }
+    }
+  </style>
+</head>
+<body>
+  <main>
+    <section class="toolbar" aria-label="工具列">
+      <div>
+        <h1>手寫圖片產生器</h1>
+        <p class="hint" id="statusText">按住滑鼠左鍵開始書寫，放開左鍵收筆。</p>
+      </div>
+      <div class="mode-tabs" role="tablist" aria-label="功能切換">
+        <button type="button" class="tab-button" id="handwritingTab" aria-selected="true" data-page="handwritingPage">手寫</button>
+        <button type="button" class="tab-button" id="cameraTab" aria-selected="false" data-page="cameraPage">拍照</button>
+      </div>
+    </section>
+
+    <section class="page" id="handwritingPage" aria-label="手寫頁面">
+      <div class="actions">
+        <button type="button" id="clearBtn">清除</button>
+        <button type="button" class="primary" id="finishBtn">完成並輸出圖片</button>
+      </div>
+      <div class="canvas-wrap">
+        <canvas id="drawingCanvas" width="1200" height="900" aria-label="空白手寫畫布"></canvas>
+      </div>
+    </section>
+
+    <section class="page" id="cameraPage" aria-label="拍照頁面" hidden>
+      <div class="camera-wrap" aria-label="相機">
+        <img class="camera-preview" id="cameraPreview" alt="Picamera2 即時畫面">
+        <div class="camera-actions">
+          <button type="button" id="startCameraBtn">開啟相機</button>
+          <button type="button" class="primary" id="captureBtn" disabled>拍照</button>
+        </div>
+      </div>
+    </section>
+  </main>
+
+  <script>
+    const canvas = document.querySelector("#drawingCanvas");
+    const ctx = canvas.getContext("2d");
+    const finishBtn = document.querySelector("#finishBtn");
+    const clearBtn = document.querySelector("#clearBtn");
+    const statusText = document.querySelector("#statusText");
+    const cameraPreview = document.querySelector("#cameraPreview");
+    const startCameraBtn = document.querySelector("#startCameraBtn");
+    const captureBtn = document.querySelector("#captureBtn");
+    const tabButtons = document.querySelectorAll(".tab-button");
+    const pages = document.querySelectorAll(".page");
+
+    let isDrawing = false;
+    let lastPoint = null;
+    let isCameraOpen = false;
+
+    function setStatus(message) {
+      statusText.textContent = message;
+    }
+
+    function switchPage(pageId) {
+      pages.forEach((page) => {
+        page.hidden = page.id !== pageId;
+      });
+
+      tabButtons.forEach((button) => {
+        button.setAttribute("aria-selected", String(button.dataset.page === pageId));
+      });
+
+      if (pageId === "handwritingPage") {
+        setStatus("按住滑鼠左鍵開始書寫，放開左鍵收筆。");
+      } else {
+        setStatus("按開啟相機後，可以拍照儲存 JPG。");
+      }
+    }
+
+    function setupBrush() {
+      ctx.strokeStyle = "#161616";
+      ctx.lineWidth = 5;
+      ctx.lineCap = "round";
+      ctx.lineJoin = "round";
+    }
+
+    function fillPaper() {
+      ctx.save();
+      ctx.globalCompositeOperation = "destination-over";
+      ctx.fillStyle = "#fff";
+      ctx.fillRect(0, 0, canvas.width, canvas.height);
+      ctx.restore();
+    }
+
+    function getCanvasPoint(event) {
+      const rect = canvas.getBoundingClientRect();
+      const scaleX = canvas.width / rect.width;
+      const scaleY = canvas.height / rect.height;
+
+      return {
+        x: (event.clientX - rect.left) * scaleX,
+        y: (event.clientY - rect.top) * scaleY
+      };
+    }
+
+    function startDrawing(event) {
+      if (event.button !== 0) return;
+
+      isDrawing = true;
+      lastPoint = getCanvasPoint(event);
+      ctx.beginPath();
+      ctx.moveTo(lastPoint.x, lastPoint.y);
+    }
+
+    function draw(event) {
+      if (!isDrawing) return;
+
+      const point = getCanvasPoint(event);
+      ctx.lineTo(point.x, point.y);
+      ctx.stroke();
+      lastPoint = point;
+    }
+
+    function stopDrawing() {
+      if (!isDrawing) return;
+
+      isDrawing = false;
+      lastPoint = null;
+      ctx.closePath();
+    }
+
+    function clearCanvas() {
+      ctx.clearRect(0, 0, canvas.width, canvas.height);
+      setupBrush();
+    }
+
+    async function saveCanvasImage() {
+      fillPaper();
+      setupBrush();
+
+      finishBtn.disabled = true;
+      setStatus("正在儲存圖片...");
+
+      try {
+        const response = await fetch("/save", {
+          method: "POST",
+          headers: {
+            "Content-Type": "application/json"
+          },
+          body: JSON.stringify({
+            image: canvas.toDataURL("image/png")
+          })
+        });
+
+        if (!response.ok) {
+          throw new Error("save failed");
+        }
+
+        const result = await response.json();
+        setStatus(`已儲存到 ${result.path}，並上傳到 S3。`);
+      } catch (error) {
+        setStatus("儲存或 S3 上傳失敗，請確認 server 與 AWS 設定。");
+      } finally {
+        finishBtn.disabled = false;
+      }
+    }
+
+    function startCamera() {
+      startCameraBtn.disabled = true;
+      isCameraOpen = false;
+      setStatus("正在開啟 Picamera2...");
+
+      cameraPreview.onload = () => {
+        isCameraOpen = true;
+        captureBtn.disabled = false;
+        startCameraBtn.disabled = false;
+        startCameraBtn.textContent = "重新整理相機";
+        setStatus("Picamera2 已開啟，可以拍照。");
+      };
+
+      cameraPreview.onerror = () => {
+        isCameraOpen = false;
+        captureBtn.disabled = true;
+        startCameraBtn.disabled = false;
+        setStatus("無法開啟 Picamera2，請確認相機已啟用且 server 有權限使用相機。");
+      };
+
+      window.setTimeout(() => {
+        if (!isCameraOpen) {
+          captureBtn.disabled = true;
+          startCameraBtn.disabled = false;
+          setStatus("Picamera2 開啟逾時，請檢查相機連線或 server log。");
+        }
+      }, 10000);
+
+      cameraPreview.src = `/camera-stream?ts=${Date.now()}`;
+    }
+
+    async function capturePhoto() {
+      if (!isCameraOpen) {
+        setStatus("請先開啟 Picamera2。");
+        return;
+      }
+
+      captureBtn.disabled = true;
+      setStatus("正在拍照並儲存照片...");
+
+      try {
+        const response = await fetch("/save-photo", {
+          method: "POST"
+        });
+
+        if (!response.ok) {
+          throw new Error("photo save failed");
+        }
+
+        const result = await response.json();
+        setStatus(`已儲存照片到 ${result.path}，並上傳到 S3。`);
+      } catch (error) {
+        setStatus("照片儲存或 S3 上傳失敗，請確認 Picamera2、server 與 AWS 設定。");
+      } finally {
+        startCameraBtn.disabled = false;
+        captureBtn.disabled = false;
+      }
+    }
+
+    setupBrush();
+
+    canvas.addEventListener("mousedown", startDrawing);
+    canvas.addEventListener("mousemove", draw);
+    window.addEventListener("mouseup", stopDrawing);
+    canvas.addEventListener("mouseleave", stopDrawing);
+    clearBtn.addEventListener("click", clearCanvas);
+    finishBtn.addEventListener("click", saveCanvasImage);
+    startCameraBtn.addEventListener("click", startCamera);
+    captureBtn.addEventListener("click", capturePhoto);
+    tabButtons.forEach((button) => {
+      button.addEventListener("click", () => switchPage(button.dataset.page));
+    });
+  </script>
+</body>
+</html>
