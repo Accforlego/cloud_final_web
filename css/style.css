@@ -529,7 +529,7 @@ button.small {
 }
 
 /* =========================================
-   討論區與題目專屬樣式
+   Discussion / question page
    ========================================= */
 
 .question-panel {
@@ -544,14 +544,13 @@ button.small {
     margin-bottom: 16px;
 }
 
-/* 題目內文區塊：給予淺色背景與邊框讓他與討論區有視覺區隔 */
 .question-content {
     font-size: 16px;
     line-height: 1.7;
     color: var(--text);
     margin-bottom: 8px;
     padding: 20px;
-    background: #f8fafc; /* 淺灰藍底色 */
+    background: #f8fafc;
     border-radius: 12px;
     border: 1px solid var(--line);
 }
@@ -560,7 +559,6 @@ button.small {
     margin: 0;
 }
 
-/* 分隔線 */
 .divider {
     border: none;
     border-top: 1px solid var(--line);
@@ -573,7 +571,6 @@ button.small {
     color: var(--text);
 }
 
-/* 留言列表 */
 .comments-list {
     display: flex;
     flex-direction: column;
@@ -586,7 +583,6 @@ button.small {
     gap: 16px;
 }
 
-/* 留言者頭像 */
 .comment-avatar {
     width: 42px;
     height: 42px;
@@ -601,12 +597,11 @@ button.small {
     flex-shrink: 0;
 }
 
-/* 留言內容對話框 */
 .comment-body {
     flex: 1;
     background: #f8fbff;
     padding: 16px;
-    border-radius: 0 16px 16px 16px; /* 對話氣泡形狀 */
+    border-radius: 0 16px 16px 16px;
     border: 1px solid #e2e8f0;
 }
 
@@ -633,7 +628,6 @@ button.small {
     color: #334155;
 }
 
-/* 留言表單 */
 .comment-form {
     display: flex;
     flex-direction: column;
@@ -644,35 +638,28 @@ button.small {
     min-height: 100px;
 }
 
-/* =========================================
-   置頂正確答案專屬樣式
-   ========================================= */
 
-/* 正確答案外層容器：加上綠色邊框與更柔和的綠色背景 */
 .comment.is-correct {
     border: 2px solid var(--success);
     border-radius: 18px;
     padding: 14px;
-    background: #f0fdf4; /* 淺綠色底色，與一般留言區隔 */
+    background: #f0fdf4; 
     box-shadow: 0 4px 12px rgba(2, 122, 72, 0.05);
 }
 
-/* 置頂答案的頭像顏色變更為成功綠 */
 .comment-avatar.correct-avatar {
     background: var(--success);
 }
 
-/* 置頂答案的對話框背景調至透明，改用外層容器的背景色 */
 .comment.is-correct .comment-body {
     background: transparent;
     border: none;
     padding: 0;
 }
 
-/* 正確答案的標籤樣式 */
 .badge.badge-correct {
     color: var(--success);
-    background: #dcfce7; /* 醒目的綠色標籤背景 */
+    background: #dcfce7; 
     border: 1px solid #bbf7d0;
     font-size: 13px;
     padding: 4px 10px;
