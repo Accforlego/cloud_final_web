@@ -1,6 +1,5 @@
 let selectedFileId = null;
 
-// 1. 載入左側的考古題列表
 async function loadDiscussionFiles() {
     const user = getCurrentUser();
     if (!user) return;
@@ -17,7 +16,6 @@ async function loadDiscussionFiles() {
     }
 }
 
-// 2. 渲染左側列表
 function renderFiles(files) {
     const fileList = document.getElementById("fileList");
     if (!files.length) {
@@ -42,7 +40,6 @@ function renderFiles(files) {
     });
 }
 
-// 3. 載入特定考古題的「題目內容」與「討論留言」
 async function loadDiscussionDetail(fileId) {
     const user = getCurrentUser();
     if (!user) return;
@@ -53,7 +50,6 @@ async function loadDiscussionDetail(fileId) {
     detail.innerHTML = `<div class="empty-state"><p>正在載入題目與討論串...</p></div>`;
 
     try {
-        // 同時呼叫兩個 API：一個拿題目內容，一個拿留言
         const [fileData, commentsData] = await Promise.all([
             api(`/file-detail?user_id=${encodeURIComponent(user.user_id)}&file_id=${encodeURIComponent(fileId)}`),
             api(`/comments?file_id=${encodeURIComponent(fileId)}`) 
@@ -61,16 +57,13 @@ async function loadDiscussionDetail(fileId) {
 
         renderDiscussionDetail(fileData.file, fileData.text, commentsData.comments || []);
         
-        // 重新渲染左側列表以更新 Active 狀態
         await loadDiscussionFiles(); 
     } catch (error) {
-        // 如果找不到留言或發生錯誤，會顯示在這裡
         detail.innerHTML = `<div class="empty-state"><p style="color: red;">載入失敗：${escapeHtml(error.message)}</p></div>`;
         setStatus("filesStatus", error.message, "err");
     }
 }
 
-// 4. 將題目內容與討論區渲染到畫面上
 function renderDiscussionDetail(file, text, comments) {
     const detail = document.getElementById("discussionDetail");
 
@@ -129,7 +122,6 @@ function renderDiscussionDetail(file, text, comments) {
         const textInput = document.getElementById("newCommentText").value;
         const submitBtn = e.target.querySelector('button[type="submit"]');
         
-        // 防呆機制：發送時按鈕反灰，避免重複連點
         submitBtn.disabled = true;
         submitBtn.textContent = "發佈中...";
         
@@ -140,14 +132,11 @@ function renderDiscussionDetail(file, text, comments) {
     });
 }
 
-// 5. 處理發布留言的動作
 async function submitNewComment(fileId, commentText) {
     const user = getCurrentUser();
     if (!user) return;
 
     try {
-        // 呼叫 POST API 寫入 DynamoDB
-        // 記得：我們 Python 後端成功時會回傳 { "message": "...", "comment": item }
         const responseData = await api('/comments', {
             method: 'POST',
             body: JSON.stringify({
@@ -158,10 +147,8 @@ async function submitNewComment(fileId, commentText) {
             })
         });
         
-        // 1. 清空輸入框
         document.getElementById("newCommentText").value = "";
 
-        // 2. 直接將後端建立好的新留言物件，塞進網頁畫面上
         if (responseData && responseData.comment) {
             appendCommentToUI(responseData.comment);
         }
@@ -171,18 +158,15 @@ async function submitNewComment(fileId, commentText) {
     }
 }
 
-// 6. 全新動態插入留言功能 (不重整網頁)
 function appendCommentToUI(c) {
     const commentsList = document.querySelector(".comments-list");
     if (!commentsList) return;
 
-    // A. 防呆：如果是該題的第一則留言，先移除「目前還沒有人留言」的提示字
     const emptyState = commentsList.querySelector(".empty-state");
     if (emptyState) {
         commentsList.innerHTML = "";
     }
 
-    // B. 產生新留言的 HTML 結構 (與原本渲染格式完全相同)
     const commentHtml = `
         <div class="comment ${c.is_best_answer ? 'is-correct' : ''}">
             <div class="comment-avatar ${c.is_best_answer ? 'correct-avatar' : ''}">
@@ -199,10 +183,8 @@ function appendCommentToUI(c) {
         </div>
     `;
 
-    // C. 使用 insertAdjacentHTML 將新留言精準「黏」在列表的最末端
     commentsList.insertAdjacentHTML('beforeend', commentHtml);
 
-    // D. 自動更新上方標題的計數數字，例如：討論區 (2) -> 討論區 (3)
     const countHeader = document.querySelector(".discussion-area h3");
     if (countHeader) {
         const match = countHeader.textContent.match(/\d+/);
@@ -213,7 +195,6 @@ function appendCommentToUI(c) {
     }
 }
 
-// 初始化
 document.addEventListener("DOMContentLoaded", () => {
     const user = requireLogin();
     if (!user) return;
