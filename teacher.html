@@ -1,0 +1,150 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>教師管理後台</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <main class="app-shell">
+        <header class="app-header">
+            <div>
+                <p class="eyebrow">Exam Archive</p>
+                <h1>教師管理後台</h1>
+            </div>
+            <div class="user-bar">
+                <span id="currentUserText">尚未登入</span>
+                <button type="button" class="button ghost small" id="logoutBtn">登出</button>
+            </div>
+        </header>
+
+        <nav class="page-nav">
+            <a class="nav-link" href="myfiles.html">我的考古題</a>
+            <a class="nav-link" href="upload.html">上傳考古題</a>
+            <a class="nav-link" href="discussion.html">討論區</a>
+            <a class="nav-link is-active" href="teacher.html">教師管理</a>
+        </nav>
+
+        <section class="teacher-dashboard">
+            <article class="stat-card"><span>學生數</span><strong id="studentCount">-</strong></article>
+            <article class="stat-card"><span>教師數</span><strong id="teacherCount">-</strong></article>
+            <article class="stat-card"><span>課程數</span><strong id="courseCount">-</strong></article>
+            <article class="stat-card"><span>考古題數</span><strong id="fileCount">-</strong></article>
+        </section>
+
+        <section class="teacher-grid">
+            <section class="panel">
+                <div class="section-head">
+                    <div>
+                        <h2>學生管理</h2>
+                        <p>新增或移除學生帳號，並設定可查看的課程。</p>
+                    </div>
+                    <button type="button" class="button ghost small" id="reloadUsersBtn">重新整理</button>
+                </div>
+
+                <div class="form-grid teacher-form">
+                    <label>使用者 ID<input id="newUserId" type="text" placeholder="例如 student006"></label>
+                    <label>姓名<input id="newUserName" type="text" placeholder="輸入姓名"></label>
+                    <label>Email<input id="newUserEmail" type="email" placeholder="輸入 Email"></label>
+                    <label>
+                        身分
+                        <select id="newUserRole">
+                            <option value="student">學生</option>
+                            <option value="ta">助教</option>
+                            <option value="teacher">教師</option>
+                        </select>
+                    </label>
+                    <label>課程代號<input id="newUserCourses" type="text" placeholder="例如 compiler,os"></label>
+                    <button type="button" class="button primary" id="createUserBtn">新增使用者</button>
+                </div>
+
+                <p class="status" id="usersStatus"></p>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>使用者</th>
+                                <th>身分</th>
+                                <th>課程</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="usersTableBody">
+                            <tr><td colspan="4">載入中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+
+            <section class="panel">
+                <div class="section-head">
+                    <div>
+                        <h2>課程管理</h2>
+                        <p>新增或刪除系統中的課程。</p>
+                    </div>
+                    <button type="button" class="button ghost small" id="reloadCoursesBtn">重新整理</button>
+                </div>
+
+                <div class="form-grid teacher-form">
+                    <label>課程代號<input id="newCourseId" type="text" placeholder="例如 ai"></label>
+                    <label>課程名稱<input id="newCourseName" type="text" placeholder="例如 Artificial Intelligence"></label>
+                    <button type="button" class="button primary" id="createCourseBtn">新增課程</button>
+                </div>
+
+                <p class="status" id="coursesStatus"></p>
+
+                <div class="table-wrap">
+                    <table>
+                        <thead>
+                            <tr>
+                                <th>課程代號</th>
+                                <th>課程名稱</th>
+                                <th>操作</th>
+                            </tr>
+                        </thead>
+                        <tbody id="coursesTableBody">
+                            <tr><td colspan="3">載入中...</td></tr>
+                        </tbody>
+                    </table>
+                </div>
+            </section>
+        </section>
+
+        <section class="panel">
+            <div class="section-head">
+                <div>
+                    <h2>考古題管理</h2>
+                    <p>查看所有考古題，必要時可以刪除資料。</p>
+                </div>
+                <button type="button" class="button ghost small" id="reloadFilesBtn">重新整理</button>
+            </div>
+
+            <p class="status" id="filesStatus"></p>
+
+            <div class="table-wrap">
+                <table>
+                    <thead>
+                        <tr>
+                            <th>檔名</th>
+                            <th>課程</th>
+                            <th>上傳者</th>
+                            <th>狀態</th>
+                            <th>操作</th>
+                        </tr>
+                    </thead>
+                    <tbody id="filesTableBody">
+                        <tr><td colspan="5">載入中...</td></tr>
+                    </tbody>
+                </table>
+            </div>
+        </section>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/session.js"></script>
+    <script src="js/teacher.js"></script>
+</body>
+</html>
