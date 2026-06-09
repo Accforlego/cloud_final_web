@@ -1,44 +1,8 @@
 let currentUser = JSON.parse(localStorage.getItem("examUser") || "null");
 
-function getCurrentUser() {
-    return currentUser;
-}
-
 function saveCurrentUser(user) {
     currentUser = user;
     localStorage.setItem("examUser", JSON.stringify(user));
-    updateUserUI();
-}
-
-function logout() {
-    currentUser = null;
-    localStorage.removeItem("examUser");
-    updateUserUI();
-}
-
-function updateUserUI() {
-    const currentUserText = document.getElementById("currentUserText");
-    const logoutBtn = document.getElementById("logoutBtn");
-    const authPanel = document.getElementById("authPanel");
-    const uploadPanel = document.getElementById("uploadPanel");
-
-    if (!currentUserText || !logoutBtn || !authPanel || !uploadPanel) {
-        return;
-    }
-
-    if (currentUser) {
-        currentUserText.textContent = `${currentUser.name}（${currentUser.role}）`;
-        logoutBtn.hidden = false;
-        authPanel.hidden = true;
-        uploadPanel.hidden = false;
-    } else {
-        currentUserText.textContent = "尚未登入";
-        logoutBtn.hidden = true;
-        authPanel.hidden = false;
-        uploadPanel.hidden = true;
-    }
-
-    renderCourseOptions();
 }
 
 function switchAuthTab(mode) {
@@ -71,7 +35,7 @@ async function login() {
         );
 
         saveCurrentUser(data.user);
-        setStatus("authStatus", "登入成功。", "ok");
+        window.location.href = "myfiles.html";
     } catch (error) {
         setStatus("authStatus", error.message, "err");
     }
@@ -105,18 +69,22 @@ async function register() {
         );
 
         saveCurrentUser(data.user);
-        setStatus("authStatus", "帳號建立成功。", "ok");
+        window.location.href = "myfiles.html";
     } catch (error) {
         setStatus("authStatus", error.message, "err");
     }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    const savedUser = JSON.parse(localStorage.getItem("examUser") || "null");
+
+    if (savedUser) {
+        window.location.href = "myfiles.html";
+        return;
+    }
+
     document.getElementById("loginTab").addEventListener("click", () => switchAuthTab("login"));
     document.getElementById("registerTab").addEventListener("click", () => switchAuthTab("register"));
     document.getElementById("loginBtn").addEventListener("click", login);
     document.getElementById("registerBtn").addEventListener("click", register);
-    document.getElementById("logoutBtn").addEventListener("click", logout);
-
-    updateUserUI();
 });

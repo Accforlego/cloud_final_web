@@ -13,61 +13,20 @@
                 <p class="eyebrow">Exam Archive</p>
                 <h1>上傳考古題</h1>
             </div>
+
             <div class="user-bar">
                 <span id="currentUserText">尚未登入</span>
-                <button type="button" class="ghost" id="logoutBtn" hidden>登出</button>
+                <button type="button" class="button ghost small" id="logoutBtn">登出</button>
             </div>
         </header>
 
-        <section class="panel" id="authPanel">
-            <div class="tabs">
-                <button type="button" class="tab is-active" id="loginTab">登入</button>
-                <button type="button" class="tab" id="registerTab">註冊</button>
-            </div>
+        <nav class="page-nav">
+            <a class="nav-link" href="myfiles.html">我的考古題</a>
+            <a class="nav-link is-active" href="upload.html">上傳考古題</a>
+            <a class="nav-link" href="discussion.html">討論區</a>
+        </nav>
 
-            <div class="form-grid" id="loginForm">
-                <label>
-                    使用者 ID
-                    <input id="loginUserId" type="text" placeholder="例如 student001">
-                </label>
-                <button type="button" class="button primary" id="loginBtn">登入</button>
-            </div>
-
-            <div class="form-grid" id="registerForm" hidden>
-                <label>
-                    使用者 ID
-                    <input id="regUserId" type="text" placeholder="例如 student001">
-                </label>
-                <label>
-                    姓名
-                    <input id="regName" type="text" placeholder="輸入姓名">
-                </label>
-                <label>
-                    Email
-                    <input id="regEmail" type="email" placeholder="輸入 Email">
-                </label>
-                <label>
-                    身分
-                    <select id="regRole">
-                        <option value="student">學生</option>
-                        <option value="teacher">教師</option>
-                        <option value="ta">助教</option>
-                    </select>
-                </label>
-                <label>
-                    課程
-                    <select id="regCourse">
-                        <option value="compiler">Compiler Design</option>
-                        <option value="os">Operating System</option>
-                    </select>
-                </label>
-                <button type="button" class="button primary" id="registerBtn">建立帳號</button>
-            </div>
-
-            <p class="status" id="authStatus"></p>
-        </section>
-
-        <section class="panel" id="uploadPanel" hidden>
+        <section class="panel" id="uploadPanel">
             <h2>選擇上傳內容</h2>
 
             <div class="form-grid two-columns">
@@ -101,6 +60,7 @@
                     <h2>確認文字內容</h2>
                     <p>你可以直接修改辨識結果，確認後會儲存為正式文字。</p>
                 </div>
+
                 <span class="badge" id="reviewBadge">等待結果</span>
             </div>
 
@@ -117,7 +77,7 @@
 
     <script src="js/config.js"></script>
     <script src="js/api.js"></script>
-    <script src="js/auth.js"></script>
+    <script src="js/session.js"></script>
     <script src="js/upload.js"></script>
 </body>
 </html>

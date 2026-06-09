@@ -88,7 +88,7 @@ async function uploadFile() {
             }
         );
 
-        await fetch(
+        const uploadResponse = await fetch(
             uploadData.upload_url,
             {
                 method: "PUT",
@@ -98,6 +98,10 @@ async function uploadFile() {
                 body: selectedFile
             }
         );
+
+        if (!uploadResponse.ok) {
+            throw new Error("上傳失敗，請稍後再試。");
+        }
 
         currentFileId = uploadData.file_id;
 
@@ -184,6 +188,12 @@ async function confirmOcrText() {
 }
 
 document.addEventListener("DOMContentLoaded", () => {
+    const user = requireLogin();
+
+    if (!user) {
+        return;
+    }
+
     document.getElementById("fileInput").addEventListener("change", handleFileChange);
     document.getElementById("uploadBtn").addEventListener("click", uploadFile);
     document.getElementById("refreshOcrBtn").addEventListener("click", pollOcrResult);

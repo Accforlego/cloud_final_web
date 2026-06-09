@@ -1,0 +1,61 @@
+<!doctype html>
+<html lang="zh-Hant">
+<head>
+    <meta charset="utf-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1">
+    <title>我的考古題</title>
+    <link rel="stylesheet" href="css/style.css">
+</head>
+<body>
+    <main class="app-shell">
+        <header class="app-header">
+            <div>
+                <p class="eyebrow">Exam Archive</p>
+                <h1>我的考古題</h1>
+            </div>
+
+            <div class="user-bar">
+                <span id="currentUserText">尚未登入</span>
+                <button type="button" class="button ghost small" id="logoutBtn">登出</button>
+            </div>
+        </header>
+
+        <nav class="page-nav">
+            <a class="nav-link is-active" href="myfiles.html">我的考古題</a>
+            <a class="nav-link" href="upload.html">上傳考古題</a>
+            <a class="nav-link" href="discussion.html">討論區</a>
+        </nav>
+
+        <section class="panel">
+            <div class="section-head">
+                <div>
+                    <h2>可查看的考古題</h2>
+                    <p>這裡只會顯示你有權限查看的課程資料。</p>
+                </div>
+
+                <button type="button" class="button ghost small" id="reloadFilesBtn">重新整理</button>
+            </div>
+
+            <div class="file-layout">
+                <div class="file-list" id="fileList">
+                    <p class="muted">載入中...</p>
+                </div>
+
+                <article class="file-detail" id="fileDetail">
+                    <div class="empty-state">
+                        <h3>選擇一份考古題</h3>
+                        <p>點選左側列表後，內容會顯示在這裡。</p>
+                    </div>
+                </article>
+            </div>
+
+            <p class="status" id="filesStatus"></p>
+        </section>
+    </main>
+
+    <script src="js/config.js"></script>
+    <script src="js/api.js"></script>
+    <script src="js/session.js"></script>
+    <script src="js/myfiles.js"></script>
+</body>
+</html>

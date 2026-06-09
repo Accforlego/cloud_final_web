@@ -1,25 +1,108 @@
 <!doctype html>
 <html lang="zh-Hant">
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>討論區</title>
+    <title>討論區 - 112學年度 作業系統 期中考</title>
     <link rel="stylesheet" href="css/style.css">
 </head>
+
 <body>
     <main class="app-shell">
         <header class="app-header">
             <div>
-                <p class="eyebrow">Exam Archive</p>
-                <h1>討論區</h1>
+                <p class="eyebrow">Exam Archive > 資訊工程學系</p>
+                <h1>112學年度 作業系統 期中考</h1>
             </div>
             <a class="button ghost" href="upload.html">回到上傳</a>
         </header>
 
-        <section class="panel empty-state">
-            <h2>討論區功能準備中</h2>
-            <p>之後可以在這裡針對考古題發問、回覆與整理討論內容。</p>
+        <section class="panel question-panel">
+            <div class="question-header">
+                <h2>第 1 題</h2>
+                <span class="badge">配分: 15分</span>
+            </div>
+            <div class="question-content">
+                <p>請解釋何謂 Context Switch？並詳細說明在作業系統中，發生 Context Switch 的時機以及其對系統帶來的效能影響（Overhead）。</p>
+            </div>
+
+            <hr class="divider">
+
+            <div class="discussion-area">
+                <h3>討論區 (3)</h3>
+                <div class="comments-list">
+
+                    <div class="comment is-correct">
+                        <div class="comment-avatar correct-avatar">答</div>
+                        <div class="comment-body">
+                            <div class="comment-meta">
+                                <strong>助教 (TA_Alan)</strong>
+                                <span class="badge badge-correct">📌 正確答案</span>
+                                <span>2024-05-11 09:00</span>
+                            </div>
+                            <p><strong>官方最佳解：</strong>Context Switch 的主要 Overhead 包含：保存與載入 CPU 暫存器狀態、更新
+                                PCB、切換記憶體分頁表（Page Table），以及最嚴重的<strong>快取記憶體失效（Cache Miss / TLB Flush）</strong>。在撰寫時若能點出
+                                Cache 失效，這題就能拿滿分。</p>
+                        </div>
+                    </div>
+                    <div class="comment">
+                        <div class="comment-avatar">大</div>
+                        <div class="comment-body">
+                            <div class="comment-meta">
+                                <strong>王大明</strong> <span>2024-05-10 14:30</span>
+                            </div>
+                            <p>這題的重點應該是要提到 PCB (Process Control Block) 的狀態儲存和載入吧？</p>
+                        </div>
+                    </div>
+
+                    <div class="comment">
+                        <div class="comment-avatar">小</div>
+                        <div class="comment-body">
+                            <div class="comment-meta">
+                                <strong>李小華</strong> <span>2024-05-10 15:12</span>
+                            </div>
+                            <p>沒錯！還要記得寫到 Context switch time 是一種 pure overhead，因為這段時間系統做不了其他有用的事情，只能做狀態切換。</p>
+                        </div>
+                    </div>
+                </div>
+
+                <form class="comment-form">
+                    <textarea placeholder="寫下你對這題的想法或疑問..." rows="3"></textarea>
+                    <div class="actions-row">
+                        <button type="button" class="button primary">發佈留言</button>
+                    </div>
+                </form>
+            </div>
         </section>
+
+        <section class="panel question-panel">
+            <div class="question-header">
+                <h2>第 2 題</h2>
+                <span class="badge">配分: 10分</span>
+            </div>
+            <div class="question-content">
+                <p>請說明在什麼情況下，Quick Sort 的時間複雜度會退化到 O(N^2)？並提出兩種可以避免此情況發生的優化策略。</p>
+            </div>
+
+            <hr class="divider">
+
+            <div class="discussion-area">
+                <h3>討論區 (0)</h3>
+                <div class="empty-state" style="padding: 24px 0;">
+                    <p>目前還沒有人留言，來當第一個討論的人吧！</p>
+                </div>
+
+                <form class="comment-form">
+                    <textarea placeholder="寫下你對這題的想法或疑問..." rows="3"></textarea>
+                    <div class="actions-row">
+                        <button type="button" class="button primary">發佈留言</button>
+                    </div>
+                </form>
+            </div>
+        </section>
+
     </main>
 </body>
+
 </html>

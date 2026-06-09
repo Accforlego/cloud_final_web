@@ -29,3 +29,30 @@ function setStatus(elementId, message, type = "") {
     element.textContent = message;
     element.className = "status" + (type ? ` ${type}` : "");
 }
+
+function formatCourseName(courseId) {
+    return COURSE_NAMES[courseId] || courseId || "未分類課程";
+}
+
+function formatDate(value) {
+    if (!value) {
+        return "尚無時間";
+    }
+
+    const date = new Date(value);
+
+    if (Number.isNaN(date.getTime())) {
+        return value;
+    }
+
+    return date.toLocaleString("zh-TW");
+}
+
+function escapeHtml(value) {
+    return String(value)
+        .replaceAll("&", "&amp;")
+        .replaceAll("<", "&lt;")
+        .replaceAll(">", "&gt;")
+        .replaceAll('"', "&quot;")
+        .replaceAll("'", "&#039;");
+}
