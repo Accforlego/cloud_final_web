@@ -39,7 +39,7 @@ async function saveProfile() {
         setStatus("profileStatus", "Saving profile...");
 
         if (APP_CONFIG.PROFILE_API_PATH) {
-            await api(
+            await profile_api(
                 APP_CONFIG.PROFILE_API_PATH,
                 {
                     method: "POST",
