@@ -599,7 +599,7 @@ async function addTAFromCandidate(userId, username) {
 
 
         // 新增成功後更新畫面
-        await loadTAList(courseId);
+        await loadTAs(courseId);
         await loadCandidateTAs(courseId);
 
     } catch (err) {
