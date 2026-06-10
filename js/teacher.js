@@ -504,7 +504,7 @@ async function loadCandidateTAs(courseId) {
 
 function renderCandidateTAs(list) {
     const container = document.getElementById("candidateTAList");
-
+    console.log(student)
     container.innerHTML = list.map(student => `
         <div class="candidate-item">
             <span>${escapeHtml(student.username)}</span>
