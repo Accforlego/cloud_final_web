@@ -48,6 +48,31 @@ async function profile_api(path, options = {}) {
     return data;
 }
 
+async function talist_api(path, options = {}) {
+    const authSession = JSON.parse(localStorage.getItem("examAuthSession") || "null");
+    const headers = {
+        "Content-Type": "application/json",
+        ...(authSession?.id_token ? { Authorization: `Bearer ${authSession.id_token}` } : {}),
+        ...(options.headers || {})
+    };
+
+    const response = await fetch(
+        APP_CONFIG.TALIST_API_BASE_URL + path,
+        {
+            ...options,
+            headers
+        }
+    );
+
+    const data = await response.json();
+
+    if (!response.ok) {
+        throw new Error(data.message || "Request failed");
+    }
+
+    return data;
+}
+
 
 function setStatus(elementId, message, type = "") {
     const element = document.getElementById(elementId);
