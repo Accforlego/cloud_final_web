@@ -407,7 +407,6 @@ async function loadTAs() {
                 method: "GET"
             }
         );
-        console.log(data)
         renderTAs(data.data || []);
         setStatus("TAsStatus", "");
     } catch (error) {
@@ -416,17 +415,17 @@ async function loadTAs() {
     }
 }
 
-async function deleteTA(data) {
-    if (!data.id) {
+async function deleteTA(taId) {
+    if (!taId) {
         return;
     }
 
-    if (!confirm(`確定要刪除課程 ${data.username} 嗎？`)) {
+    if (!confirm(`確定要刪除嗎？`)) {
         return;
     }
 
     try {
-        await talist_api(`/${data.id}`, {
+        await talist_api(`/${taId}`, {
             method: "DELETE"
         });
 
@@ -447,15 +446,15 @@ function renderTAs(data) {
     }
 
     tbody.innerHTML = data
-        .map((course) => {
+        .map((TA) => {
             return `
                 <tr>
-                    <td>${escapeHtml(data.username || "")}</td>
+                    <td>${escapeHtml(TA.username || "")}</td>
                     <td>
                         <button
                             type="button"
                             class="button danger small"
-                            data-delete-TA="${escapeHtml(course.course_id || "")}"
+                            data-ta-id="${TA.id}"
                         >
                             刪除
                         </button>
@@ -465,11 +464,13 @@ function renderTAs(data) {
         })
         .join("");
 
-
-    document.querySelectorAll("[data-delete-TA]").forEach((button) => {
-        button.addEventListener("click", () => {
-            deleteTA(data);
-        });
+    tbody.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-ta-id]");
+        if (!btn) return;
+    
+        const taId = btn.dataset.taId;
+        console.log(taId)
+        deleteTA(taId);
     });
 }
 
