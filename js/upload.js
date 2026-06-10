@@ -26,7 +26,7 @@ async function renderCourseOptions() {
     }
 
     if (user.role === 'teacher') {
-        const navpage = document.getElementsByClassName("nav-page");
+        const navpage = document.getElementsByClassName("page-nav");
         navpage.innerHTML += `<a class="nav-link is-active" href="teacher.html">教師管理</a>`;
     }
 
