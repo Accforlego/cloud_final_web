@@ -601,7 +601,7 @@ async function initializeTeacherPage() {
 document.addEventListener("DOMContentLoaded", initializeTeacherPage);
 
 async function addTA(courseId, userId, username) {
-    return await talist_api("/", {
+    return await talist_api("", {
         method: "POST",
         body: JSON.stringify({
             course_id: courseId,
