@@ -408,6 +408,7 @@ document.getElementById("addTABtn").addEventListener("click", () => {
     // 先顯示 loading（之後會接 API）
     document.getElementById("taModalStatus").innerText = "載入學生中...";
     document.getElementById("studentList").innerHTML = "";
+    console.log("Open add TA modal")
 });
 
 
