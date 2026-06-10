@@ -145,11 +145,25 @@
         <div class="section-head">
             <div>
                 <h2>TA管理</h2>
-                <p>查看課程TA列表，必要時可以刪除TA資料。</p>
+                <p>查看課程TA列表，新增或刪除TA資料。</p>
             </div>
-            <button type="button" class="button ghost small" id="reloadTAListBtn">
-                重新整理
-            </button>
+    
+            <div style="display:flex; gap:10px; align-items:center;">
+                <!-- 選擇課程 -->
+                <select id="courseSelect" class="button ghost small">
+                    <option value="">選擇課程</option>
+                </select>
+    
+                <!-- 新增TA -->
+                <button type="button" class="button small" id="addTABtn">
+                    + 新增助教
+                </button>
+    
+                <!-- 重新整理 -->
+                <button type="button" class="button ghost small" id="reloadTAListBtn">
+                    重新整理
+                </button>
+            </div>
         </div>
     
         <p class="status" id="taListStatus"></p>
@@ -170,7 +184,6 @@
                         <td colspan="4">載入中...</td>
                     </tr>
                 </tbody>
-    
             </table>
         </div>
     </section>
