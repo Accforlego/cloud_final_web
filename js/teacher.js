@@ -493,8 +493,8 @@ async function loadCandidateTAs(courseId) {
             allStudents => !taSet.has(allStudents.user_id)
         );
 
-        console.log(allStudents)
-        console.log(tas)
+        console.log(data)
+        console.log(taRes)
 
         // 5️⃣ render
         renderCandidateTAs(candidates);
