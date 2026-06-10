@@ -408,19 +408,18 @@ document.getElementById("addTABtn").addEventListener("click", () => {
     // 先顯示 loading（之後會接 API）
     document.getElementById("taModalStatus").innerText = "載入學生中...";
     document.getElementById("studentList").innerHTML = "";
-    console.log("Open add TA modal")
-});
+    // console.log("Open add TA modal")
 
-
-// 關閉 modal
-document.getElementById("closeTAModalBtn").addEventListener("click", () => {
-    document.getElementById("taModal").classList.add("hidden");
-});
-
-
-// 點背景關閉（optional UX）
-document.getElementById("taModal").addEventListener("click", (e) => {
-    if (e.target.id === "taModal") {
+    // 關閉 modal
+    document.getElementById("closeTAModalBtn").addEventListener("click", () => {
         document.getElementById("taModal").classList.add("hidden");
-    }
+    });
+
+    // 點背景關閉（optional UX）
+    document.getElementById("taModal").addEventListener("click", (e) => {
+        if (e.target.id === "taModal") {
+            document.getElementById("taModal").classList.add("hidden");
+        }
+    });
 });
+
