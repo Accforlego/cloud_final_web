@@ -425,7 +425,7 @@ async function deleteTA(taId) {
     }
 
     try {
-        await talist_api(`/id=${taId}`, {
+        await talist_api(`?id=${taId}`, {
             method: "DELETE"
         });
 
