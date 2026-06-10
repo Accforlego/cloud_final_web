@@ -397,12 +397,12 @@ async function loadTAs() {
     const tbody = document.getElementById("taListTableBody");
 
     try {
-        setStatus("coursesStatus", "正在載入課程...");
+        setStatus("coursesStatus", "正在載入助教列表...");
         tbody.innerHTML = "<tr><td colspan='3'>載入中...</td></tr>";
         const courseId = document.getElementById("courseSelect").value;
 
         const data = await talist_api(
-            `/ta-list?course_id=${encodeURIComponent(courseId)}`,
+            `?course_id=${encodeURIComponent(courseId)}`,
             {
                 method: "GET"
             }
@@ -411,7 +411,7 @@ async function loadTAs() {
         renderCourses(data.courses || []);
         setStatus("coursesStatus", "");
     } catch (error) {
-        tbody.innerHTML = "<tr><td colspan='3'>無法載入課程。</td></tr>";
+        tbody.innerHTML = "<tr><td colspan='3'>無法載入助教列表。</td></tr>";
         setStatus("coursesStatus", error.message, "err");
     }
 }
