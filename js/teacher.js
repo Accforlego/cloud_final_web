@@ -507,8 +507,8 @@ function renderCandidateTAs(list) {
         <tr>
             <td>${escapeHtml(student.username)}</td>
             <td><button btn-success class="button small"
-                data-candicate-name="${student.name}
-                data-candicate-id="${student.username}">
+                data-candicate-name="${student.username}
+                data-candicate-id="${student.id}">
                 設為 TA
             </button></td>
         </tr>
@@ -574,7 +574,7 @@ async function initializeTeacherPage() {
 
     document.getElementById("candidateTAtable").addEventListener("click", async (e) => {
         const btn = e.target.closest("[data-candicate-id]");
-        console.log(btn.dataset.userId)
+        
         if (!btn) return;
     
         const courseId = document.getElementById("courseSelect").value;
