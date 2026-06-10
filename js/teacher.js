@@ -493,9 +493,6 @@ async function loadCandidateTAs(courseId) {
             allStudents => !taSet.has(allStudents.user_id)
         );
 
-        console.log(data)
-        console.log(taRes)
-
         // 5️⃣ render
         renderCandidateTAs(candidates);
 
@@ -509,7 +506,7 @@ function renderCandidateTAs(list) {
     container.innerHTML = list.map(student => `
         <tr>
             <td>${escapeHtml(student.username)}</td>
-            <td><button class="button small"
+            <td><button btn-success class="button small"
                 data-candicate-name="${student.name}
                 data-candicate-id="${student.username}">
                 設為 TA
@@ -552,7 +549,6 @@ async function initializeTeacherPage() {
         if (!btn) return;
     
         const taId = btn.dataset.taId;
-        console.log(taId)
         deleteTA(taId);
     });
 
@@ -578,6 +574,7 @@ async function initializeTeacherPage() {
 
     document.getElementById("candidateTAtable").addEventListener("click", async (e) => {
         const btn = e.target.closest("[data-candicate-id]");
+        console.log(btn.dataset)
         if (!btn) return;
     
         const courseId = document.getElementById("courseSelect").value;
