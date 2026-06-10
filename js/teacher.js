@@ -458,6 +458,10 @@ async function initializeTeacherPage() {
             }
         });
     });
+
+    document.getElementById("courseSelect").addEventListener("change", () => {
+        loadTAs();
+    });
 }
 
 document.addEventListener("DOMContentLoaded", initializeTeacherPage);
