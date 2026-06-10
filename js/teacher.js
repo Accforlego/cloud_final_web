@@ -101,6 +101,16 @@ function renderUsers(users) {
                             刪除
                         </button>
                     </td>
+                    <td>
+                        <button
+                            type="button"
+                            class="button success small"
+                            data-add-ta="${escapeHtml(user.user_id || "")}"
+                            ${disableDelete ? "disabled" : ""}
+                        >
+                            刪除
+                        </button>
+                    </td>
                 </tr>
             `;
         })

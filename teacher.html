@@ -68,7 +68,8 @@
                                 <th>使用者</th>
                                 <th>身分</th>
                                 <th>課程</th>
-                                <th>操作</th>
+                                <th>刪除學生</th>
+                                <th>設為助教</th>
                             </tr>
                         </thead>
                         <tbody id="usersTableBody">
@@ -140,6 +141,74 @@
                 </table>
             </div>
         </section>
+
+    <section class="panel">
+        <div class="section-head">
+            <div>
+                <h2>TA管理</h2>
+                <p>查看課程TA列表，必要時可以刪除TA資料。</p>
+            </div>
+            <button type="button" class="button ghost small" id="reloadTAListBtn">
+                重新整理
+            </button>
+        </div>
+    
+        <p class="status" id="taListStatus"></p>
+    
+        <div class="table-wrap">
+            <table>
+                <thead>
+                    <tr>
+                        <th>課程</th>
+                        <th>TA帳號</th>
+                        <th>建立時間</th>
+                        <th>操作</th>
+                    </tr>
+                </thead>
+    
+                <tbody id="taListTableBody">
+                    <tr>
+                        <td colspan="4">載入中...</td>
+                    </tr>
+                </tbody>
+    
+            </table>
+        </div>
+    </section>
+    
+    <section class="panel">
+    <div class="section-head">
+        <div>
+            <h2>TA管理</h2>
+            <p>查看課程TA列表，必要時可以刪除TA資料。</p>
+        </div>
+        <button type="button" class="button ghost small" id="reloadTAListBtn">
+            重新整理
+        </button>
+    </div>
+
+    <p class="status" id="taListStatus"></p>
+
+    <div class="table-wrap">
+        <table>
+            <thead>
+                <tr>
+                    <th>課程</th>
+                    <th>TA帳號</th>
+                    <th>建立時間</th>
+                    <th>操作</th>
+                </tr>
+            </thead>
+
+            <tbody id="taListTableBody">
+                <tr>
+                    <td colspan="4">載入中...</td>
+                </tr>
+            </tbody>
+
+        </table>
+    </div>
+</section>
     </main>
 
     <script src="js/config.js"></script>
