@@ -404,12 +404,7 @@ async function loadTAs() {
         const data = await talist_api(
             `/ta-list?course_id=${encodeURIComponent(courseId)}`,
             {
-                method: "GET",
-                headers: {
-                    'Access-Control-Allow-Origin': '*',
-                    'Access-Control-Allow-Headers': 'Content-Type, Authorization',
-                    'Access-Control-Allow-Methods': 'GET, POST, DELETE, OPTIONS'
-                },
+                method: "GET"
             }
         );
 
