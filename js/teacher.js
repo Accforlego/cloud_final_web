@@ -59,7 +59,7 @@ async function loadUsers() {
         tbody.innerHTML = "<tr><td colspan='4'>載入中...</td></tr>";
 
         const data = await data_api(
-            `/users?requester_id=${encodeURIComponent(getRequesterId())}`
+            `/users?requester_id=${encodeURIComponent(getRequesterId())}&role=student`
         );
 
         renderUsers(data.users || []);
@@ -463,6 +463,57 @@ function renderTAs(data) {
             `;
         })
         .join("");
+}
+
+async function loadCandidateTAs(courseId) {
+    try {
+        if (!courseId) return;
+
+        // 1️⃣ 取得所有學生
+        const data = await data_api(
+            `/users?requester_id=${encodeURIComponent(getRequesterId())}&role=student`
+        );
+
+        // 2️⃣ 取得該課程 TA
+        const taRes = await talist_api(
+            `?course_id=${encodeURIComponent(courseId)}`,
+            {
+                method: "GET"
+            }
+        );
+
+        const allStudents = allStudentsRes.data || [];
+        const tas = taRes.data || [];
+
+        // 3️⃣ 建立 TA 的 user_id Set（用來快速查）
+        const taSet = new Set(tas.map(ta => ta.user_id));
+
+        // 4️⃣ filter 掉已經是 TA 的學生
+        const candidates = allStudents.filter(
+            student => !taSet.has(student.user_id)
+        );
+
+        // 5️⃣ render
+        renderCandidateTAs(candidates);
+
+    } catch (err) {
+        console.error(err);
+        document.getElementById("candidateStatus").innerText = err.message;
+    }
+}
+
+function renderCandidateTAs(list) {
+    const container = document.getElementById("candidateTAList");
+
+    container.innerHTML = list.map(student => `
+        <div class="candidate-item">
+            <span>${escapeHtml(student.username)}</span>
+            <button class="button small"
+                data-user-id="${student.user_id}">
+                設為 TA
+            </button>
+        </div>
+    `).join("");
 }
 
 async function initializeTeacherPage() {
