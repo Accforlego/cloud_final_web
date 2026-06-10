@@ -194,5 +194,24 @@
     <script src="js/api.js"></script>
     <script src="js/session.js"></script>
     <script src="js/teacher.js"></script>
+
+    <div id="taModal" class="modal hidden">
+        <div class="modal-content">
+    
+            <div class="modal-header">
+                <h3>選擇學生加入 TA</h3>
+                <button class="modal-close" id="closeTAModalBtn">✕</button>
+            </div>
+    
+            <div class="modal-body">
+                <p class="status" id="taModalStatus">載入學生中...</p>
+    
+                <div class="student-list" id="studentList">
+                    <!-- 未來放學生列表 -->
+                </div>
+            </div>
+    
+        </div>
+    </div>
 </body>
 </html>
