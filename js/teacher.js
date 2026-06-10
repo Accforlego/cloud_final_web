@@ -482,7 +482,7 @@ async function loadCandidateTAs(courseId) {
             }
         );
 
-        const allStudents = data.user || [];
+        const allStudents = data.users || [];
         const tas = taRes.data || [];
 
         // 3️⃣ 建立 TA 的 user_id Set（用來快速查）
