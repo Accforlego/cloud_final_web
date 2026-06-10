@@ -507,14 +507,19 @@ async function loadCandidateTAs(courseId) {
 function renderCandidateTAs(list) {
     const container = document.getElementById("candidateTAtable");
     container.innerHTML = list.map(student => `
-        <div class="candidate-item">
+        <tr>
             <td>${escapeHtml(student.username)}</td>
             <td><button class="button small"
-                data-user-id="${student.username}">
+                data-candicate-name="${student.name}
+                data-candicate-id="${student.username}">
                 設為 TA
             </button></td>
-        </div>
+        </tr>
     `).join("");
+}
+
+function addTA() {
+    
 }
 
 async function initializeTeacherPage() {
@@ -570,7 +575,38 @@ async function initializeTeacherPage() {
             document.getElementById("taModal").classList.add("hidden");
         }
     });
+
+    document.getElementById("candidateTAtable").addEventListener("click", async (e) => {
+        const btn = e.target.closest("[data-candicate-id]");
+        if (!btn) return;
+    
+        const courseId = document.getElementById("courseSelect").value;
+        const userId = btn.dataset.userId;
+        const username = btn.dataset.username;
+    
+        try {
+            await addTA(courseId, userId, username);
+    
+            // refresh lists
+            loadCandidateTAs(courseId);
+            loadTAs(courseId);
+    
+        } catch (err) {
+            console.error(err);
+            alert(err.message);
+        }
+    });
 }
 
 document.addEventListener("DOMContentLoaded", initializeTeacherPage);
 
+async function addTA(courseId, userId, username) {
+    return await talist_api("/", {
+        method: "POST",
+        body: JSON.stringify({
+            course_id: courseId,
+            user_id: userId,
+            username: username
+        })
+    });
+}
