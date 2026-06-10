@@ -490,7 +490,7 @@ async function loadCandidateTAs(courseId) {
 
         // 4️⃣ filter 掉已經是 TA 的學生
         const candidates = allStudents.filter(
-            student => !taSet.has(student.user_id)
+            allStudents => !taSet.has(allStudents.user_id)
         );
 
         // 5️⃣ render
@@ -498,18 +498,16 @@ async function loadCandidateTAs(courseId) {
 
     } catch (err) {
         console.error(err);
-        document.getElementById("candidateStatus").innerText = err.message;
     }
 }
 
 function renderCandidateTAs(list) {
     const container = document.getElementById("candidateTAList");
-    console.log(student)
     container.innerHTML = list.map(student => `
         <div class="candidate-item">
             <span>${escapeHtml(student.username)}</span>
             <button class="button small"
-                data-user-id="${student.user_id}">
+                data-user-id="${student.username}">
                 設為 TA
             </button>
         </div>
