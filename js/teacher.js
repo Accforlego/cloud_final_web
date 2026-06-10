@@ -101,16 +101,6 @@ function renderUsers(users) {
                             刪除
                         </button>
                     </td>
-                    <td>
-                        <button
-                            type="button"
-                            class="button warning small"
-                            data-add-ta="${escapeHtml(user.user_id || "")}"
-                            ${disableDelete ? "disabled" : ""}
-                        >
-                            設為助教
-                        </button>
-                    </td>
                 </tr>
             `;
         })
