@@ -112,7 +112,7 @@ document.addEventListener("DOMContentLoaded", () => {
     
     if (user.role === 'teacher') {
         const navpage = document.getElementsByClassName("page-nav")[0];
-        navpage.innerHTML += `<a class="nav-link is-active" href="teacher.html">教師管理</a>`;
+        navpage.innerHTML += `<a class="nav-link" href="teacher.html">教師管理</a>`;
     }
 
     document.getElementById("reloadFilesBtn").addEventListener("click", loadMyFiles);
