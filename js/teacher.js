@@ -104,11 +104,11 @@ function renderUsers(users) {
                     <td>
                         <button
                             type="button"
-                            class="button success small"
+                            class="button warning small"
                             data-add-ta="${escapeHtml(user.user_id || "")}"
                             ${disableDelete ? "disabled" : ""}
                         >
-                            刪除
+                            設為助教
                         </button>
                     </td>
                 </tr>
