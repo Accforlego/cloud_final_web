@@ -573,8 +573,9 @@ async function initializeTeacherPage() {
     });
 
     document.getElementById("candidateTAtable").addEventListener("click", async (e) => {
+        console.log(e.target.closest("[data-candicate-id]"))
         const btn = e.target.closest("[data-candicate-id]");
-        console.log(btn.dataset.userId)
+        
         if (!btn) return;
     
         const courseId = document.getElementById("courseSelect").value;
