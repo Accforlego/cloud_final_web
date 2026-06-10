@@ -463,15 +463,6 @@ function renderTAs(data) {
             `;
         })
         .join("");
-
-    tbody.addEventListener("click", (e) => {
-        const btn = e.target.closest("[data-ta-id]");
-        if (!btn) return;
-    
-        const taId = btn.dataset.taId;
-        console.log(taId)
-        deleteTA(taId);
-    });
 }
 
 async function initializeTeacherPage() {
@@ -519,6 +510,15 @@ async function initializeTeacherPage() {
 
     document.getElementById("courseSelect").addEventListener("change", () => {
         loadTAs();
+    });
+
+    tbody.addEventListener("click", (e) => {
+        const btn = e.target.closest("[data-ta-id]");
+        if (!btn) return;
+    
+        const taId = btn.dataset.taId;
+        console.log(taId)
+        deleteTA(taId);
     });
 }
 
