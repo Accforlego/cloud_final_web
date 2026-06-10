@@ -38,7 +38,7 @@ function requireTeacher() {
 
 async function loadDashboard() {
     try {
-        const data = await api(
+        const data = await data_api(
             `/dashboard?requester_id=${encodeURIComponent(getRequesterId())}`
         );
 
@@ -58,7 +58,7 @@ async function loadUsers() {
         setStatus("usersStatus", "正在載入使用者...");
         tbody.innerHTML = "<tr><td colspan='4'>載入中...</td></tr>";
 
-        const data = await api(
+        const data = await data_api(
             `/users?requester_id=${encodeURIComponent(getRequesterId())}`
         );
 
@@ -128,7 +128,7 @@ async function createUser() {
     }
 
     try {
-        await api("/users", {
+        await data_api("/users", {
             method: "POST",
             body: JSON.stringify({
                 requester_id: getRequesterId(),
@@ -164,7 +164,7 @@ async function deleteUser(userId) {
     }
 
     try {
-        await api("/users", {
+        await data_api("/users", {
             method: "DELETE",
             body: JSON.stringify({
                 requester_id: getRequesterId(),
@@ -188,7 +188,7 @@ async function loadCourses() {
         setStatus("coursesStatus", "正在載入課程...");
         tbody.innerHTML = "<tr><td colspan='3'>載入中...</td></tr>";
 
-        const data = await api("/courses");
+        const data = await data_api("/courses");
 
         renderCourses(data.courses || []);
         setStatus("coursesStatus", "");
@@ -243,7 +243,7 @@ async function createCourse() {
     }
 
     try {
-        await api("/courses", {
+        await data_api("/courses", {
             method: "POST",
             body: JSON.stringify({
                 requester_id: getRequesterId(),
@@ -274,7 +274,7 @@ async function deleteCourse(courseId) {
     }
 
     try {
-        await api("/courses", {
+        await data_api("/courses", {
             method: "DELETE",
             body: JSON.stringify({
                 requester_id: getRequesterId(),
@@ -298,7 +298,7 @@ async function loadFiles() {
         setStatus("filesStatus", "正在載入考古題...");
         tbody.innerHTML = "<tr><td colspan='5'>載入中...</td></tr>";
 
-        const data = await api(
+        const data = await data_api(
             `/files?user_id=${encodeURIComponent(getRequesterId())}`
         );
 
@@ -360,7 +360,7 @@ async function deleteFile(fileId) {
     }
 
     try {
-        await api("/files", {
+        await data_api("/files", {
             method: "DELETE",
             body: JSON.stringify({
                 requester_id: getRequesterId(),

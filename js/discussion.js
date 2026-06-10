@@ -8,7 +8,7 @@ async function loadDiscussionFiles() {
     const fileList = document.getElementById("fileList");
     try {
         setStatus("filesStatus", "正在載入可討論的考古題...");
-        const data = await api(`/files?user_id=${encodeURIComponent(user.user_id)}`);
+        const data = await data_api(`/files?user_id=${encodeURIComponent(user.user_id)}`);
         renderFiles(data.files || []);
         setStatus("filesStatus", "");
     } catch (error) {
@@ -52,8 +52,8 @@ async function loadDiscussionDetail(fileId) {
 
     try {
         const [fileData, commentsData] = await Promise.all([
-            api(`/file-detail?user_id=${encodeURIComponent(user.user_id)}&file_id=${encodeURIComponent(fileId)}`),
-            api(`/comments?file_id=${encodeURIComponent(fileId)}`)
+            data_api(`/file-detail?user_id=${encodeURIComponent(user.user_id)}&file_id=${encodeURIComponent(fileId)}`),
+            data_api(`/comments?file_id=${encodeURIComponent(fileId)}`)
         ]);
 
         currentComments = commentsData.comments || []; // 存入前端陣列
@@ -156,7 +156,7 @@ async function submitNewComment(fileId, commentText) {
     if (!user) return;
 
     try {
-        const responseData = await api('/comments', {
+        const responseData = await data_api('/comments', {
             method: 'POST',
             body: JSON.stringify({
                 file_id: fileId,
@@ -227,7 +227,7 @@ async function pinComment(fileId, timestamp) {
     if (!user || user.role !== 'teacher') return;
 
     try {
-        await api('/comments/pin', {
+        await data_api('/comments/pin', {
             method: 'POST',
             body: JSON.stringify({ requester_id: user.user_id, file_id: fileId, timestamp: timestamp, pin_status: true })
         });
@@ -253,7 +253,7 @@ async function unpinComment(fileId, timestamp) {
     if (!user || user.role !== 'teacher') return;
 
     try {
-        await api('/comments/pin', {
+        await data_api('/comments/pin', {
             method: 'POST',
             body: JSON.stringify({ requester_id: user.user_id, file_id: fileId, timestamp: timestamp, pin_status: false })
         });

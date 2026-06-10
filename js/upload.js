@@ -4,7 +4,7 @@ let ocrPollTimer = null;
 
 async function getCourses() {
     try {
-        const data = await api("/courses");
+        const data = await data_api("/courses");
         return data.courses || DEMO_COURSES;
     } catch (error) {
         return DEMO_COURSES;
@@ -75,7 +75,7 @@ async function uploadFile() {
     try {
         setStatus("uploadStatus", "正在準備上傳...");
 
-        const uploadData = await api(
+        const uploadData = await data_api(
             "/upload-url",
             {
                 method: "POST",
@@ -138,7 +138,7 @@ async function pollOcrResult() {
     }
 
     try {
-        const data = await api(
+        const data = await data_api(
             `/ocr-result?file_id=${encodeURIComponent(currentFileId)}&user_id=${encodeURIComponent(user.user_id)}`
         );
 
@@ -168,7 +168,7 @@ async function confirmOcrText() {
     }
 
     try {
-        await api(
+        await data_api(
             "/confirm-ocr",
             {
                 method: "POST",

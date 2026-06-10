@@ -13,7 +13,7 @@ async function loadMyFiles() {
         setStatus("filesStatus", "正在載入考古題...");
         fileList.innerHTML = "<p class='muted'>載入中...</p>";
 
-        const data = await api(
+        const data = await data_api(
             `/files?user_id=${encodeURIComponent(user.user_id)}`
         );
 
@@ -76,7 +76,7 @@ async function loadFileDetail(fileId) {
     `;
 
     try {
-        const data = await api(
+        const data = await data_api(
             `/file-detail?user_id=${encodeURIComponent(user.user_id)}&file_id=${encodeURIComponent(fileId)}`
         );
 
