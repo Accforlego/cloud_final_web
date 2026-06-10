@@ -407,13 +407,49 @@ async function loadTAs() {
                 method: "GET"
             }
         );
-
-        renderCourses(data.courses || []);
+        console.log(data)
+        renderTAs(data || []);
         setStatus("coursesStatus", "");
     } catch (error) {
         tbody.innerHTML = "<tr><td colspan='3'>無法載入助教列表。</td></tr>";
         setStatus("coursesStatus", error.message, "err");
     }
+}
+
+function renderTAs(courses) {
+    const tbody = document.getElementById("taListTableBody");
+
+    if (!courses.length) {
+        tbody.innerHTML = "<tr><td colspan='3'>目前沒有助教在此課程中。</td></tr>";
+        return;
+    }
+
+    // tbody.innerHTML = courses
+    //     .map((course) => {
+    //         return `
+    //             <tr>
+    //                 <td>${escapeHtml(course.course_id || "")}</td>
+    //                 <td>${escapeHtml(course.course_name || "")}</td>
+    //                 <td>
+    //                     <button
+    //                         type="button"
+    //                         class="button danger small"
+    //                         data-delete-course="${escapeHtml(course.course_id || "")}"
+    //                     >
+    //                         刪除
+    //                     </button>
+    //                 </td>
+    //             </tr>
+    //         `;
+    //     })
+    //     .join("");
+
+
+    // document.querySelectorAll("[data-delete-course]").forEach((button) => {
+    //     button.addEventListener("click", () => {
+    //         deleteCourse(button.dataset.deleteCourse);
+    //     });
+    // });
 }
 
 async function initializeTeacherPage() {
