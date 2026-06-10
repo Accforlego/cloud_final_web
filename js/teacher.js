@@ -541,7 +541,7 @@ async function initializeTeacherPage() {
         loadTAs();
     });
 
-    tbody.addEventListener("click", (e) => {
+    document.getElementById("taListTableBody").addEventListener("click", (e) => {
         const btn = e.target.closest("[data-ta-id]");
         if (!btn) return;
     
@@ -549,19 +549,17 @@ async function initializeTeacherPage() {
         console.log(taId)
         deleteTA(taId);
     });
-}
 
-document.addEventListener("DOMContentLoaded", initializeTeacherPage);
+    // 打開 modal
+    document.getElementById("addTABtn").addEventListener("click", () => {
+        document.getElementById("taModal").classList.remove("hidden");
 
-// 打開 modal
-document.getElementById("addTABtn").addEventListener("click", () => {
-    document.getElementById("taModal").classList.remove("hidden");
+        // 先顯示 loading（之後會接 API）
+        loadCandidateTAs(document.getElementById("courseSelect").value);
+    });
 
-    // 先顯示 loading（之後會接 API）
-    loadCandidateTAs();
-
-    // 關閉 modal
-    document.getElementById("closeTAModalBtn").addEventListener("click", () => {
+     // 關閉 modal
+     document.getElementById("closeTAModalBtn").addEventListener("click", () => {
         document.getElementById("taModal").classList.add("hidden");
     });
 
@@ -571,4 +569,7 @@ document.getElementById("addTABtn").addEventListener("click", () => {
             document.getElementById("taModal").classList.add("hidden");
         }
     });
-});
+}
+
+document.addEventListener("DOMContentLoaded", initializeTeacherPage);
+
