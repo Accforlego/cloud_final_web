@@ -25,6 +25,11 @@ async function renderCourseOptions() {
         return;
     }
 
+    if (user.role === 'teacher') {
+        const navpage = document.getElementById("nav-page");
+        navpage.innerHTML += `<a class="nav-link is-active" href="teacher.html">教師管理</a>`;
+    }
+
     const courses = await getCourses();
     const allowedCourses = new Set(user.courses || []);
     const visibleCourses = courses.filter((course) => allowedCourses.has(course.course_id));

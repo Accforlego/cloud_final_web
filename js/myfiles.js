@@ -110,6 +110,11 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
     }
 
+    if (user.role === 'teacher') {
+        const navpage = document.getElementById("nav-page");
+        navpage.innerHTML += `<a class="nav-link is-active" href="teacher.html">教師管理</a>`;
+    }
+
     document.getElementById("reloadFilesBtn").addEventListener("click", loadMyFiles);
     loadMyFiles();
 });
