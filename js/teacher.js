@@ -200,6 +200,7 @@ async function loadCourses() {
 
 function renderCourses(courses) {
     const tbody = document.getElementById("coursesTableBody");
+    const select = document.getElementById("courseSelect")
 
     if (!courses.length) {
         tbody.innerHTML = "<tr><td colspan='3'>目前沒有課程。</td></tr>";
@@ -222,6 +223,21 @@ function renderCourses(courses) {
                         </button>
                     </td>
                 </tr>
+            `;
+        })
+        .join("");
+
+    select.innerHTML = `
+        <option value="">選擇課程</option>
+    ` + courses
+        .map((course) => {
+            const courseId = escapeHtml(course.course_id || "");
+            const courseName = escapeHtml(course.course_name || "");
+    
+            return `
+                <option value="${courseId}">
+                    ${courseId} - ${courseName}
+                </option>
             `;
         })
         .join("");
@@ -377,6 +393,29 @@ async function deleteFile(fileId) {
     }
 }
 
+async function loadTAs() {
+    const tbody = document.getElementById("taListTableBody");
+
+    try {
+        setStatus("coursesStatus", "正在載入課程...");
+        tbody.innerHTML = "<tr><td colspan='3'>載入中...</td></tr>";
+        const courseId = document.getElementById("courseSelect").value;
+
+        const data = await talist_api(
+            `/ta-list?course_id=${encodeURIComponent(courseId)}`,
+            {
+                method: "GET"
+            }
+        );
+
+        renderCourses(data.courses || []);
+        setStatus("coursesStatus", "");
+    } catch (error) {
+        tbody.innerHTML = "<tr><td colspan='3'>無法載入課程。</td></tr>";
+        setStatus("coursesStatus", error.message, "err");
+    }
+}
+
 async function initializeTeacherPage() {
     const user = requireTeacher();
 
@@ -397,29 +436,29 @@ async function initializeTeacherPage() {
         loadCourses(),
         loadFiles()
     ]);
+
+    // 打開 modal
+    document.getElementById("addTABtn").addEventListener("click", () => {
+        document.getElementById("taModal").classList.remove("hidden");
+
+        // 先顯示 loading（之後會接 API）
+        document.getElementById("taModalStatus").innerText = "載入學生中...";
+        document.getElementById("studentList").innerHTML = "";
+        // console.log("Open add TA modal")
+
+        // 關閉 modal
+        document.getElementById("closeTAModalBtn").addEventListener("click", () => {
+            document.getElementById("taModal").classList.add("hidden");
+        });
+
+        // 點背景關閉（optional UX）
+        document.getElementById("taModal").addEventListener("click", (e) => {
+            if (e.target.id === "taModal") {
+                document.getElementById("taModal").classList.add("hidden");
+            }
+        });
+    });
 }
 
 document.addEventListener("DOMContentLoaded", initializeTeacherPage);
-
-// 打開 modal
-document.getElementById("addTABtn").addEventListener("click", () => {
-    document.getElementById("taModal").classList.remove("hidden");
-
-    // 先顯示 loading（之後會接 API）
-    document.getElementById("taModalStatus").innerText = "載入學生中...";
-    document.getElementById("studentList").innerHTML = "";
-    // console.log("Open add TA modal")
-
-    // 關閉 modal
-    document.getElementById("closeTAModalBtn").addEventListener("click", () => {
-        document.getElementById("taModal").classList.add("hidden");
-    });
-
-    // 點背景關閉（optional UX）
-    document.getElementById("taModal").addEventListener("click", (e) => {
-        if (e.target.id === "taModal") {
-            document.getElementById("taModal").classList.add("hidden");
-        }
-    });
-});
 
