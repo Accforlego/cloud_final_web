@@ -588,7 +588,7 @@ async function addTAFromCandidate(userId, username) {
 
     try {
 
-        await talist_api("/ta-list", {
+        await talist_api("", {
             method: "POST",
             body: JSON.stringify({
                 course_id: courseId,
