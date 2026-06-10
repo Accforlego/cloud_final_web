@@ -454,7 +454,7 @@ function renderTAs(data) {
                         <button
                             type="button"
                             class="button danger small"
-                            data-ta-id="${TA.user_id}"
+                            data-ta-id="${TA.id}"
                         >
                             刪除
                         </button>
