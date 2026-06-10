@@ -507,8 +507,10 @@ function renderCandidateTAs(list) {
         <tr>
             <td>${escapeHtml(student.username)}</td>
             <td><button btn-success class="button small candidate-ta-btn    "
-                data-candicate-name="${student.username}
-                data-candicate-id="${student.user_id}">
+                onclick='addTAFromCandidate(
+                        ${JSON.stringify(student.user_id)},
+                        ${JSON.stringify(student.username)}
+                    )'>
                 設為 TA
             </button></td>
         </tr>
@@ -571,39 +573,37 @@ async function initializeTeacherPage() {
             document.getElementById("taModal").classList.add("hidden");
         }
     });
-
-    document.getElementById("candidateTAtable").addEventListener("click", async (e) => {
-        const btn = e.target.closest(".candidate-ta-btn");
-        console.log(btn.dataset)
-        if (!btn) return;
-    
-        const courseId = document.getElementById("courseSelect").value;
-        const userId = btn.dataset.userId;
-        const username = btn.dataset.username;
-    
-        try {
-            await addTA(courseId, userId, username);
-    
-            // refresh lists
-            loadCandidateTAs(courseId);
-            loadTAs(courseId);
-    
-        } catch (err) {
-            console.error(err);
-            alert(err.message);
-        }
-    });
 }
 
 document.addEventListener("DOMContentLoaded", initializeTeacherPage);
 
-async function addTA(courseId, userId, username) {
-    return await talist_api("", {
-        method: "POST",
-        body: JSON.stringify({
-            course_id: courseId,
-            user_id: userId,
-            username: username
-        })
-    });
+async function addTAFromCandidate(userId, username) {
+
+    const courseId = document.getElementById("courseSelect").value;
+
+    if (!courseId) {
+        alert("請先選擇課程");
+        return;
+    }
+
+    try {
+
+        await talist_api("/ta-list", {
+            method: "POST",
+            body: JSON.stringify({
+                course_id: courseId,
+                user_id: userId,
+                username: username
+            })
+        });
+
+
+        // 新增成功後更新畫面
+        await loadTAList(courseId);
+        await loadCandidateTAs(courseId);
+
+    } catch (err) {
+        console.error(err);
+        alert("新增 TA 失敗: " + err.message);
+    }
 }
