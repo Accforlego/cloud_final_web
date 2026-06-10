@@ -397,7 +397,7 @@ async function loadTAs() {
     const tbody = document.getElementById("taListTableBody");
 
     try {
-        setStatus("coursesStatus", "正在載入助教列表...");
+        setStatus("TAsStatus", "正在載入助教列表...");
         tbody.innerHTML = "<tr><td colspan='3'>載入中...</td></tr>";
         const courseId = document.getElementById("courseSelect").value;
 
@@ -408,48 +408,69 @@ async function loadTAs() {
             }
         );
         console.log(data)
-        renderTAs(data || []);
-        setStatus("coursesStatus", "");
+        renderTAs(data.data || []);
+        setStatus("TAsStatus", "");
     } catch (error) {
         tbody.innerHTML = "<tr><td colspan='3'>無法載入助教列表。</td></tr>";
-        setStatus("coursesStatus", error.message, "err");
+        setStatus("TAsStatus", error.message, "err");
     }
 }
 
-function renderTAs(courses) {
+async function deleteTA(data) {
+    if (!data.id) {
+        return;
+    }
+
+    if (!confirm(`確定要刪除課程 ${data.username} 嗎？`)) {
+        return;
+    }
+
+    try {
+        await talist_api(`/${data.id}`, {
+            method: "DELETE"
+        });
+
+        setStatus("TAsStatus", "課程已刪除。", "ok");
+
+        await loadTAs();
+    } catch (error) {
+        setStatus("TAsStatus", error.message, "err");
+    }
+}
+
+function renderTAs(data) {
     const tbody = document.getElementById("taListTableBody");
 
-    if (!courses.length) {
+    if (!data.length) {
         tbody.innerHTML = "<tr><td colspan='3'>目前沒有助教在此課程中。</td></tr>";
         return;
     }
 
-    // tbody.innerHTML = courses
-    //     .map((course) => {
-    //         return `
-    //             <tr>
-    //                 <td>${escapeHtml(course.course_id || "")}</td>
-    //                 <td>${escapeHtml(course.course_name || "")}</td>
-    //                 <td>
-    //                     <button
-    //                         type="button"
-    //                         class="button danger small"
-    //                         data-delete-course="${escapeHtml(course.course_id || "")}"
-    //                     >
-    //                         刪除
-    //                     </button>
-    //                 </td>
-    //             </tr>
-    //         `;
-    //     })
-    //     .join("");
+    tbody.innerHTML = data
+        .map((course) => {
+            return `
+                <tr>
+                    <td>${escapeHtml(data.username || "")}</td>
+                    <td>
+                        <button
+                            type="button"
+                            class="button danger small"
+                            data-delete-TA="${escapeHtml(course.course_id || "")}"
+                        >
+                            刪除
+                        </button>
+                    </td>
+                </tr>
+            `;
+        })
+        .join("");
 
 
-    // document.querySelectorAll("[data-delete-course]").forEach((button) => {
-    //     button.addEventListener("click", () => {
-    //         deleteCourse(button.dataset.deleteCourse);
-    //     });
-    // });
+    document.querySelectorAll("[data-delete-TA]").forEach((button) => {
+        button.addEventListener("click", () => {
+            deleteTA(data);
+        });
+    });
 }
 
 async function initializeTeacherPage() {
