@@ -86,7 +86,7 @@ function renderUsers(users) {
             return `
                 <tr>
                     <td>
-                        <strong>${escapeHtml(user.name || user.user_id)}</strong>
+                        <strong>${escapeHtml(user.name || user.username)}</strong>
                         <span>${escapeHtml(user.user_id || "")}</span>
                     </td>
                     <td>${escapeHtml(user.role || "")}</td>
