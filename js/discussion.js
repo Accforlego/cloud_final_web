@@ -5,11 +5,6 @@ async function loadDiscussionFiles() {
     const user = getCurrentUser();
     if (!user) return;
 
-    if (user.role === 'teacher') {
-        const navpage = document.getElementsByClassName("page-nav");
-        navpage.innerHTML += `<a class="nav-link is-active" href="teacher.html">教師管理</a>`;
-    }
-
     const fileList = document.getElementById("fileList");
     try {
         setStatus("filesStatus", "正在載入可討論的考古題...");

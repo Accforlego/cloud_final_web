@@ -113,6 +113,7 @@ document.addEventListener("DOMContentLoaded", () => {
     if (user.role === 'teacher') {
         const navpage = document.getElementsByClassName("page-nav");
         navpage.innerHTML += `<a class="nav-link is-active" href="teacher.html">教師管理</a>`;
+        console.log("教師登入，顯示教師管理選項");
     }
 
     document.getElementById("reloadFilesBtn").addEventListener("click", loadMyFiles);
