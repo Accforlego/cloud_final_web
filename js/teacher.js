@@ -508,11 +508,11 @@ function renderCandidateTAs(list) {
     const container = document.getElementById("candidateTAtable");
     container.innerHTML = list.map(student => `
         <div class="candidate-item">
-            <span>${escapeHtml(student.username)}</span>
-            <button class="button small"
+            <td>${escapeHtml(student.username)}</td>
+            <td><button class="button small"
                 data-user-id="${student.username}">
                 設為 TA
-            </button>
+            </button></td>
         </div>
     `).join("");
 }
