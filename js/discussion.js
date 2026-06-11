@@ -363,6 +363,7 @@ document.addEventListener("DOMContentLoaded", async () => {
     if (!user) return;
     // loadDiscussionFiles();
     loadFilter();
+    loadTAdata();
 });
 
 
