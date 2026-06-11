@@ -86,18 +86,57 @@ function renderFilter(userCourses) {
 }
 
 async function loadDiscussionFiles() {
+
     const user = getCurrentUser();
     if (!user) return;
 
-    const fileList = document.getElementById("fileList");
+
+    const fileList =
+        document.getElementById("fileList");
+
+
+    const courseId =
+        document.getElementById("fileCourseSelect")?.value || "";
+
+
     try {
-        setStatus("filesStatus", "正在載入可討論的考古題...");
-        const data = await data_api(`/files?user_id=${encodeURIComponent(user.user_id)}`);
-        renderFiles(data.files || []);
+
+        setStatus(
+            "filesStatus",
+            "正在載入可討論的考古題..."
+        );
+
+
+        // ⭐ 有選課程就帶 query
+        const url =
+            courseId
+                ? `/files?user_id=${encodeURIComponent(user.user_id)}&course_id=${encodeURIComponent(courseId)}`
+                : `/files?user_id=${encodeURIComponent(user.user_id)}`;
+
+
+        const data =
+            await data_api(url);
+
+
+        renderFiles(
+            data.files || []
+        );
+
+
         setStatus("filesStatus", "");
+
+
     } catch (error) {
-        fileList.innerHTML = "<p class='muted'>無法載入資料。</p>";
-        setStatus("filesStatus", error.message, "err");
+
+        fileList.innerHTML =
+            "<p class='muted'>無法載入資料。</p>";
+
+
+        setStatus(
+            "filesStatus",
+            error.message,
+            "err"
+        );
     }
 }
 
@@ -357,3 +396,7 @@ async function unpinComment(fileId, timestamp) {
         alert("取消置頂失敗：" + error.message);
     }
 }
+
+document.getElementById("courseSelect").addEventListener("change", () => {
+    loadDiscussionFiles();
+});
