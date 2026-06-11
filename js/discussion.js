@@ -14,9 +14,10 @@ async function loadFilter() {
             data.courses || [];
         
 
-        // 只保留 user.courses
         const userCourses =
             user.courses || [];
+
+        console.log(allCourses, userCourses);
 
         const filteredCourses =
             allCourses.filter(course =>
