@@ -34,21 +34,26 @@ function requireLogin() {
 }
 
 function logout() {
-
-    const logoutUrl =
-        new URL(`${APP_CONFIG.COGNITO_DOMAIN}/logout`);
-
+    const logoutUrl = new URL(`${APP_CONFIG.COGNITO_DOMAIN}/logout`);
 
     localStorage.clear(); // ⭐ 比 removeItem 更乾淨（建議）
 
     sessionStorage.clear();
-
 
     logoutUrl.search = new URLSearchParams({
         client_id: APP_CONFIG.COGNITO_CLIENT_ID,
         logout_uri: APP_CONFIG.COGNITO_LOGOUT_URI
     }).toString();
 
-
     window.location.href = logoutUrl.toString();
 }
+
+document.addEventListener("DOMContentLoaded", () => {
+    const logoutBtn = document.getElementById("logoutBtn");
+
+    if (logoutBtn) {
+        logoutBtn.addEventListener("click", logout);
+    }
+
+    requireLogin();
+});
