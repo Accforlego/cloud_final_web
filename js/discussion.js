@@ -377,6 +377,7 @@ async function pinComment(fileId, timestamp) {
     const user = await getCurrentUser();
     const courseId =
         document.getElementById("fileCourseSelect")?.value || "";
+    console.log(tacourse, courseId, tacourse.includes(courseId));
     const isTeacherorTA = user && (user.role === 'teacher' || tacourse.includes(courseId));
     if (!user || !isTeacherorTA) return;
 
