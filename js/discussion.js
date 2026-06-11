@@ -15,6 +15,7 @@ async function loadFilter() {
         
         const userCoursesRaw =
             user.courses || [];
+
         const userCourses =
             Array.isArray(userCoursesRaw?.L)
                 ? userCoursesRaw.L.map(x => x.S)
