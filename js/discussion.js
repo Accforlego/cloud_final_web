@@ -380,6 +380,9 @@ document.addEventListener("DOMContentLoaded", async () => {
 
         await loadJoinCourseOptions();
     });
+    if (user.role === 'teacher') {
+        document.getElementById("openJoinCourseModal").hidden = true;
+    }
 });
 
 async function loadJoinCourseOptions() {
