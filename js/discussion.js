@@ -4,10 +4,8 @@ let currentComments = [];
 async function loadFilter() {
 
     const user = getCurrentUser();
-
     if (!user) return;
-
-
+    console.log("Current user:", user);
     try {
 
         const data = await data_api("/courses");
