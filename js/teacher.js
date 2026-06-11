@@ -104,7 +104,8 @@ function renderUsers(users) {
                     >
                         管理課程
                     </button>
-
+                </td>
+                <td>
                     <button
                         type="button"
                         class="button danger small"
