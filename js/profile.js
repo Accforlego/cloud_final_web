@@ -51,7 +51,7 @@ async function saveProfile() {
             );
         }
 
-        localStorage.setItem(`examProfile:${user.sub || user.user_id}`, JSON.stringify({ role, courses }));
+        localStorage.setItem(`examProfile:${user.sub || user.user_id}`, JSON.stringify({ role }));
         localStorage.setItem("examUser", JSON.stringify(nextUser));
         window.location.href = "myfiles.html";
     } catch (error) {
