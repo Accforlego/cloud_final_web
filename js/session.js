@@ -1,15 +1,5 @@
-async function getCurrentUser() {
-    const data = await data_api(
-        `/users?user_id=${getRequesterId()}`
-    );
-
-    const user = data.users?.[0];
-
-    // normalize
-    return {
-        ...user,
-        courses: user.courses?.L?.map(x => x.S) || []
-    };
+function getCurrentUser() {
+    return JSON.parse(localStorage.getItem("examUser") || "null");
 }
 
 function hasCompleteProfile(user) {
