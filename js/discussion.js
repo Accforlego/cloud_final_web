@@ -58,7 +58,7 @@ async function loadTAdata() {
         }
     );
 
-    const tacourse = (data.data || []).map(item => item.course_id);
+    const tacourse = (res.data || []).map(item => item.course_id);
 
     console.log("TA courses:", tacourse);
 }
