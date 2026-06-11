@@ -1,4 +1,5 @@
 function getCurrentUser() {
+    localStorage.clear();
     return JSON.parse(localStorage.getItem("examUser") || "null");
 }
 

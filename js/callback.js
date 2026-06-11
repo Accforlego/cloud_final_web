@@ -27,7 +27,7 @@ function saveAuthSession(tokens) {
     };
 
     localStorage.setItem("examAuthSession", JSON.stringify(tokens));
-    localStorage.setItem("examUser", JSON.stringify(user));
+    // localStorage.setItem("examUser", JSON.stringify(user));
 
     return user;
 }
