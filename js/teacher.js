@@ -78,7 +78,10 @@ async function loadUsersCourses(user_id) {
         const data = await data_api(
             `/user-courses?user_id=${encodeURIComponent(user_id)}`
         );
-        console.log("使用者課程資料:", data.courses);
+        // console.log("使用者課程資料:", data.courses);
+        const selectedSet = new Set(
+            data.courses.map(c => c.course_id)
+        );
         document
         .querySelectorAll("#stucrsContent input[type='checkbox']")
         .forEach(cb => {
