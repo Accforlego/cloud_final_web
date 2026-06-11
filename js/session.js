@@ -1,5 +1,29 @@
-function getCurrentUser() {
-    return JSON.parse(localStorage.getItem("examUser") || "null");
+async function getCurrentUser() {
+
+    const session =
+        JSON.parse(localStorage.getItem("examAuthSession"));
+
+    if (!session) return null;
+
+    const claims =
+        decodeJwtPayload(session.id_token);
+
+
+    const data =
+        await data_api(
+            `/users?user_id=${claims.sub}`
+        );
+
+
+    const user = data.users?.[0];
+
+    if (!user) return null;
+
+
+    return {
+        ...user,
+        courses: user.courses?.L?.map(x => x.S) || []
+    };
 }
 
 function hasCompleteProfile(user) {
