@@ -12,7 +12,7 @@ function parseCoursesInput(value) {
 }
 
 function requireTeacher() {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
 
     if (!user) {
         window.location.href = "index.html";

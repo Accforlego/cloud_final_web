@@ -3,7 +3,7 @@ let currentComments = [];
 
 async function loadFilter() {
 
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     // console.log("current user:", user);
     if (!user) return;
 
@@ -94,7 +94,7 @@ function renderFilter(userCourses) {
 
 async function loadDiscussionFiles() {
 
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     if (!user) return;
 
 
@@ -172,7 +172,7 @@ function renderFiles(files) {
 }
 
 async function loadDiscussionDetail(fileId) {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     if (!user) return;
 
     selectedFileId = fileId;
@@ -200,7 +200,7 @@ function renderCommentsList() {
     const commentsList = document.querySelector(".comments-list");
     if (!commentsList) return;
 
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     const isTeacher = user && user.role === 'teacher';
 
     if (currentComments.length === 0) {
@@ -282,7 +282,7 @@ function renderDiscussionDetail(file, text) {
 }
 
 async function submitNewComment(fileId, commentText) {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     if (!user) return;
 
     try {
@@ -354,7 +354,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 async function pinComment(fileId, timestamp) {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     if (!user || user.role !== 'teacher') return;
 
     try {
@@ -380,7 +380,7 @@ async function pinComment(fileId, timestamp) {
 }
 
 async function unpinComment(fileId, timestamp) {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     if (!user || user.role !== 'teacher') return;
 
     try {

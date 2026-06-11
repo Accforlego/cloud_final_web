@@ -1,7 +1,7 @@
 let selectedFileId = null;
 
 async function loadMyFiles() {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     console.log("Current user:", user);
     if (!user) {
         return;
@@ -60,7 +60,7 @@ function renderFiles(files) {
 }
 
 async function loadFileDetail(fileId) {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
 
     if (!user) {
         return;

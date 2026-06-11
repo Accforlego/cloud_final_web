@@ -10,7 +10,7 @@ function setSelectedCourses(courses) {
 }
 
 async function saveProfile() {
-    const user = getCurrentUser();
+    const user = await getCurrentUser();
     const role = document.getElementById("roleSelect").value;
     const courses = getSelectedCourses();
 
