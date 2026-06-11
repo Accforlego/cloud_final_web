@@ -5,14 +5,14 @@ async function loadFilter() {
 
     const user = getCurrentUser();
     if (!user) return;
-    console.log("Current user:", user);
+
     try {
 
         const data = await data_api("/courses");
-
+        console.log("courses data:", data);
 
         const allCourses =
-            data.courses || [];
+            data.data || [];
 
 
         // 只保留 user.courses
