@@ -82,6 +82,7 @@ async function loadUsersCourses(user_id) {
         const selectedSet = new Set(
             data.courses.map(c => c.course_id)
         );
+        console.log("使用者選取的課程 ID:", selectedSet);
         document
         .querySelectorAll("#stucrsContent input[type='checkbox']")
         .forEach(cb => {
