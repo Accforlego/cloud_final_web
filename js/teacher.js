@@ -78,8 +78,15 @@ async function loadUsersCourses(user_id) {
         const data = await data_api(
             `/user-courses?user_id=${encodeURIComponent(user_id)}`
         );
-        console.log("使用者課程資料:", data);
-        renderUsers(data.users || []);
+        console.log("使用者課程資料:", data.courses);
+        document
+        .querySelectorAll("#stucrsContent input[type='checkbox']")
+        .forEach(cb => {
+
+            const courseId = cb.dataset.courseId;
+
+            cb.checked = selectedSet.has(courseId);
+        });
         setStatus("usercrsStatus", "");
     } catch (error) {
         tbody.innerHTML = "<tr><td colspan='4'>無法載入使用者課程。</td></tr>";
@@ -585,7 +592,6 @@ function openUserCourseModal(userId) {
     modal.classList.remove("hidden");
 
     loadUsersCourses(userId);
-    loadUsers();
 }
 
 async function initializeTeacherPage() {
