@@ -1,5 +1,5 @@
 let selectedFileId = null;
-
+const user = null;
 async function loadMyFiles() {
     const user = await getCurrentUser();
     if (!user) {

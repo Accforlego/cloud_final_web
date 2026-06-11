@@ -1,10 +1,11 @@
 let selectedFileId = null;
 let currentComments = [];
 let tacourse = [];
+const user = null;
 
 async function loadFilter() {
 
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
     // console.log("current user:", user);
     if (!user) return;
 
@@ -49,7 +50,7 @@ async function loadFilter() {
 
 async function loadTAdata() {
 
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
 
     const res = await talist_api(
         `?user_id=${encodeURIComponent(user.user_id)}`,
@@ -111,7 +112,7 @@ function renderFilter(userCourses) {
 
 async function loadDiscussionFiles() {
 
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
     if (!user) return;
 
 
@@ -189,7 +190,7 @@ function renderFiles(files) {
 }
 
 async function loadDiscussionDetail(fileId) {
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
     if (!user) return;
 
     selectedFileId = fileId;
@@ -217,7 +218,7 @@ async function renderCommentsList() {
     const commentsList = document.querySelector(".comments-list");
     if (!commentsList) return;
 
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
     const courseId =
         document.getElementById("fileCourseSelect")?.value || "";
     const isTeacherorTA = user && (user.role === 'teacher' || tacourse.includes(courseId));
@@ -301,7 +302,7 @@ function renderDiscussionDetail(file, text) {
 }
 
 async function submitNewComment(fileId, commentText) {
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
     if (!user) return;
 
     try {
@@ -365,7 +366,7 @@ function appendCommentToUI(c) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const user = await requireLogin();
+    user = await requireLogin();
     if (!user) return;
     // loadDiscussionFiles();
     loadFilter();
@@ -374,7 +375,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 
 async function pinComment(fileId, timestamp) {
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
     const courseId =
         document.getElementById("fileCourseSelect")?.value || "";
     console.log(tacourse, courseId, tacourse.includes(courseId));
@@ -404,7 +405,7 @@ async function pinComment(fileId, timestamp) {
 }
 
 async function unpinComment(fileId, timestamp) {
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
     const courseId =
         document.getElementById("fileCourseSelect")?.value || "";
     const isTeacherorTA = user && (user.role === 'teacher' || tacourse.includes(courseId));
