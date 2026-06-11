@@ -371,8 +371,38 @@ document.addEventListener("DOMContentLoaded", async () => {
     // loadDiscussionFiles();
     loadFilter();
     loadTAdata();
+
+    document.getElementById("openJoinCourseModal")
+    .addEventListener("click", async () => {
+
+        document.getElementById("joinCourseModal")
+            .classList.remove("hidden");
+
+        await loadJoinCourseOptions();
+    });
 });
 
+async function loadJoinCourseOptions() {
+
+    const user = await getCurrentUser();
+
+    const res = await data_api("/courses");
+
+    const allCourses = res.courses || [];
+    const userCourses = user.courses || [];
+
+    const availableCourses = allCourses.filter(course =>
+        !userCourses.includes(course.course_id)
+    );
+
+    const select = document.getElementById("joinCourseSelect");
+
+    select.innerHTML = availableCourses.map(course => `
+        <option value="${course.course_id}">
+            ${course.course_id} - ${course.course_name}
+        </option>
+    `).join("");
+}
 
 async function pinComment(fileId, timestamp) {
     // const user = await getCurrentUser();
