@@ -283,12 +283,14 @@ button.small {
 .camera-area {
     display: grid;
     gap: 14px;
+    --camera-aspect-ratio: 16 / 9;
 }
 
 .camera-area video,
 .camera-area canvas {
     width: 100%;
-    aspect-ratio: 16 / 9;
+    max-height: 68vh;
+    aspect-ratio: var(--camera-aspect-ratio);
     display: block;
     border: 1px solid var(--line);
     border-radius: 12px;

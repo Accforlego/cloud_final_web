@@ -7,6 +7,7 @@ let isDrawing = false;
 let hasHandwriting = false;
 let cameraStream = null;
 let capturedPhotoFile = null;
+let cameraMetadataHandler = null;
 
 async function getCourses() {
     try {
@@ -251,6 +252,7 @@ async function startCamera() {
             },
             audio: false
         });
+        bindCameraMetadataHandler();
         cameraPreview.srcObject = cameraStream;
         setStatus("uploadStatus", "");
     } catch (error) {
@@ -258,25 +260,63 @@ async function startCamera() {
     }
 }
 
-function stopCamera() {
-    if (!cameraStream) {
+function bindCameraMetadataHandler() {
+    const cameraPreview = document.getElementById("cameraPreview");
+
+    if (cameraMetadataHandler) {
+        cameraPreview.removeEventListener("loadedmetadata", cameraMetadataHandler);
+    }
+
+    cameraMetadataHandler = () => {
+        updateCameraAspectRatio(cameraPreview.videoWidth, cameraPreview.videoHeight);
+    };
+
+    cameraPreview.addEventListener("loadedmetadata", cameraMetadataHandler);
+}
+
+function updateCameraAspectRatio(width, height) {
+    const cameraArea = document.getElementById("cameraArea");
+
+    if (!cameraArea || !width || !height) {
         return;
     }
 
-    cameraStream.getTracks().forEach((track) => track.stop());
-    cameraStream = null;
+    cameraArea.style.setProperty("--camera-aspect-ratio", `${width} / ${height}`);
+}
 
+function stopCamera() {
     const cameraPreview = document.getElementById("cameraPreview");
 
     if (cameraPreview) {
+        if (cameraMetadataHandler) {
+            cameraPreview.removeEventListener("loadedmetadata", cameraMetadataHandler);
+            cameraMetadataHandler = null;
+        }
+
         cameraPreview.srcObject = null;
+    }
+
+    if (cameraStream) {
+        cameraStream.getTracks().forEach((track) => track.stop());
+        cameraStream = null;
+    }
+
+    const cameraArea = document.getElementById("cameraArea");
+
+    if (cameraArea) {
+        cameraArea.style.removeProperty("--camera-aspect-ratio");
     }
 }
 
 function resetCameraPreview() {
+    const cameraArea = document.getElementById("cameraArea");
     const cameraPreview = document.getElementById("cameraPreview");
     const cameraCanvas = document.getElementById("cameraCanvas");
     const retakePhotoBtn = document.getElementById("retakePhotoBtn");
+
+    if (cameraArea && !cameraStream) {
+        cameraArea.style.removeProperty("--camera-aspect-ratio");
+    }
 
     if (cameraPreview) {
         cameraPreview.hidden = false;
@@ -303,6 +343,7 @@ function capturePhoto() {
 
     cameraCanvas.width = cameraPreview.videoWidth;
     cameraCanvas.height = cameraPreview.videoHeight;
+    updateCameraAspectRatio(cameraCanvas.width, cameraCanvas.height);
     cameraCanvas.getContext("2d").drawImage(cameraPreview, 0, 0);
     cameraCanvas.hidden = false;
     cameraPreview.hidden = true;
