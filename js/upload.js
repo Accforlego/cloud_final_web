@@ -8,6 +8,7 @@ let hasHandwriting = false;
 let cameraStream = null;
 let capturedPhotoFile = null;
 let cameraMetadataHandler = null;
+let user = null;
 
 async function getCourses() {
     try {
@@ -25,7 +26,7 @@ async function renderCourseOptions() {
         return;
     }
 
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
 
     if (!user) {
         courseSelect.innerHTML = "";
@@ -384,7 +385,7 @@ function setReviewState(label) {
 }
 
 async function uploadFile() {
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
     const course = document.getElementById("courseSelect").value;
     const fileCategory = document.getElementById("fileCategory").value;
     const uploadCategory = fileCategory === "camera" ? "image" : fileCategory;
@@ -473,7 +474,7 @@ function startOcrPolling() {
 }
 
 async function pollOcrResult() {
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
 
     if (!user || !currentFileId) {
         return;
@@ -501,7 +502,7 @@ async function pollOcrResult() {
 }
 
 async function confirmOcrText() {
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
     const correctedText = document.getElementById("correctedText").value;
 
     if (!user || !currentFileId) {
@@ -530,7 +531,7 @@ async function confirmOcrText() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const user = await requireLogin();
+    user = await requireLogin();
 
     if (!user) {
         return;

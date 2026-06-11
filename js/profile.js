@@ -1,3 +1,5 @@
+let user = null;
+
 function getSelectedCourses() {
     return Array.from(document.querySelectorAll("input[name='course']:checked"))
         .map((input) => input.value);
@@ -10,7 +12,7 @@ function setSelectedCourses(courses) {
 }
 
 async function saveProfile() {
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
     const role = document.getElementById("roleSelect").value;
     const courses = getSelectedCourses();
 
@@ -60,7 +62,7 @@ async function saveProfile() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const user = await requireLogin();
+    user = await requireLogin();
 
     if (!user) {
         return;

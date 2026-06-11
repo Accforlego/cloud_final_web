@@ -1,4 +1,5 @@
 let teacherUser = null;
+let user = null;
 
 function getRequesterId() {
     return teacherUser ? teacherUser.user_id : "";
@@ -12,7 +13,7 @@ function parseCoursesInput(value) {
 }
 
 async function requireTeacher() {
-    const user = await getCurrentUser();
+    // user = await getCurrentUser();
 
     if (!user) {
         window.location.href = "index.html";
@@ -829,7 +830,7 @@ async function update_user_courses() {
 }
 
 async function initializeTeacherPage() {
-    const user = requireTeacher();
+    user = requireTeacher();
 
     if (!user) {
         return;

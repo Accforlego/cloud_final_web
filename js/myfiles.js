@@ -1,7 +1,7 @@
 let selectedFileId = null;
-const user = null;
+let user = null;
 async function loadMyFiles() {
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
     if (!user) {
         return;
     }
@@ -59,7 +59,7 @@ function renderFiles(files) {
 }
 
 async function loadFileDetail(fileId) {
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
 
     if (!user) {
         return;
@@ -103,7 +103,7 @@ function renderFileDetail(file, text) {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    const user = await requireLogin();
+    user = await requireLogin();
 
     if (!user) {
         return;
