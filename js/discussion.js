@@ -1,7 +1,7 @@
 let selectedFileId = null;
 let currentComments = [];
 let tacourse = [];
-const user = null;
+let user = null;
 
 async function loadFilter() {
 
