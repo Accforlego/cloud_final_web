@@ -120,6 +120,32 @@
                     <p>查看所有考古題，必要時可以刪除資料。</p>
                 </div>
                 <button type="button" class="button ghost small" id="reloadFilesBtn">重新整理</button>
+                <div class="section-head">
+                    <div>
+                        <h2>考古題管理</h2>
+                        <p>查看所有考古題，必要時可以刪除資料。</p>
+                    </div>
+                
+                    <div style="display:flex; gap:10px;">
+                
+                        <select 
+                            id="fileCourseSelect"
+                            class="button ghost small">
+                            <option value="">
+                                全部課程
+                            </option>
+                        </select>
+                
+                
+                        <button 
+                            type="button" 
+                            class="button ghost small" 
+                            id="reloadFilesBtn">
+                            重新整理
+                        </button>
+                
+                    </div>
+                </div>
             </div>
 
             <p class="status" id="filesStatus"></p>

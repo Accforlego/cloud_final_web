@@ -78,9 +78,9 @@ async function loadUsersCourses(user_id) {
         const data = await data_api(
             `/user-courses?user_id=${encodeURIComponent(user_id)}`
         );
-        console.log("使用者課程資料:", data.courses);
+        // console.log("使用者課程資料:", data.courses);
         const selectedSet = new Set(data.courses);
-        console.log("使用者選取的課程 ID:", selectedSet);
+        // console.log("使用者選取的課程 ID:", selectedSet);
         document
         .querySelectorAll("#stucrsContent input[type='checkbox']")
         .forEach(cb => {
@@ -259,6 +259,7 @@ function renderCourses(courses) {
     const tbody = document.getElementById("coursesTableBody");
     const select = document.getElementById("courseSelect")
     const stucrsContent = document.getElementById("stucrsContent");
+    const fileSelect = document.getElementById("fileCourseSelect");
 
     if (!courses.length) {
         tbody.innerHTML = "<tr><td colspan='3'>目前沒有課程。</td></tr>";
@@ -316,6 +317,25 @@ function renderCourses(courses) {
             <span>${courseId} - ${courseName}</span>
         </label>
     `;
+    }).join("");
+
+    fileSelect.innerHTML =
+    `<option value="">全部課程</option>` +
+    courses.map(course => {
+
+        const id =
+            escapeHtml(course.course_id || "");
+
+        const name =
+            escapeHtml(course.course_name || "");
+
+
+        return `
+        <option value="${id}">
+            ${id} - ${name}
+        </option>
+        `;
+
     }).join("");
 }
 
