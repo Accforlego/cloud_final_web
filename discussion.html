@@ -31,6 +31,9 @@
                         全部課程
                     </option>
                 </select>
+                <button id="openJoinCourseModal" class="button small primary">
+                    申請加入課程
+                </button>
             </div>
 
             <div class="file-layout">
@@ -48,6 +51,25 @@
             
             <p class="status" id="filesStatus"></p>
         </section>
+        
+        <div id="joinCourseModal" class="modal hidden">
+            <div class="modal-content">
+        
+                <div class="modal-header">
+                    <h3>選擇要加入的課程</h3>
+                    <button id="closeJoinCourseModalBtn">✕</button>
+                </div>
+        
+                <select id="joinCourseSelect"></select>
+        
+                <div style="display:flex; justify-content:center; margin-top:20px;">
+                    <button id="confirmJoinCourseBtn" class="button primary small">
+                        確認申請
+                    </button>
+                </div>
+        
+            </div>
+        </div>
     </main>
 
     <script src="js/config.js"></script>

@@ -1,5 +1,4 @@
 let teacherUser = null;
-let user = null;
 
 function getRequesterId() {
     return teacherUser ? teacherUser.user_id : "";
@@ -830,7 +829,7 @@ async function update_user_courses() {
 }
 
 async function initializeTeacherPage() {
-    user = requireTeacher();
+    const user = requireTeacher();
 
     if (!user) {
         return;
