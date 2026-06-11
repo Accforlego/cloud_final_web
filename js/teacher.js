@@ -431,15 +431,6 @@ async function addCourse(courseId) {
     }
 
     try {
-        const userData = await data_api(
-            `/users?requester_id=${encodeURIComponent(getRequesterId())}&user_id=${encodeURIComponent(user.user_id)}`
-        );
-
-
-        const user =
-            userData.users?.[0];
-
-
         let courses = user?.courses || [];
 
 
@@ -461,6 +452,8 @@ async function addCourse(courseId) {
                 courses: courses
             })
         });
+
+        user = await getCurrentUser();
 
         await loadCourses();
         await loadDashboard();
