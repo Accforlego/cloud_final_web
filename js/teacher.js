@@ -116,7 +116,7 @@ function renderUsers(users) {
                 <td>
                     <button
                         type="button"
-                        class="button success small"
+                        class="button small"
                         onclick='openUserCourseModal(${JSON.stringify(user.user_id)})'
                     >
                         管理課程
@@ -302,11 +302,11 @@ function renderCourses(courses) {
         const courseName = escapeHtml(course.course_name || "");
 
         return `
-            <label style="display:flex; gap:8px; align-items:center; margin:6px 0;">
-                <input type="checkbox" value="${courseId}" data-course-id="${courseId}">
-                <span>${courseId} - ${courseName}</span>
-            </label>
-        `;
+        <label>
+            <input type="checkbox" value="${courseId}" data-course-id="${courseId}">
+            <span>${courseId} - ${courseName}</span>
+        </label>
+    `;
     }).join("");
 }
 
@@ -585,6 +585,7 @@ function openUserCourseModal(userId) {
     modal.classList.remove("hidden");
 
     loadUsersCourses(userId);
+    loadUsers()
 }
 
 async function initializeTeacherPage() {
