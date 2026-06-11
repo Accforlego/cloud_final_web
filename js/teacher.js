@@ -79,38 +79,69 @@ function renderUsers(users) {
     }
 
     tbody.innerHTML = users
-        .map((user) => {
-            const courses = (user.courses || []).join(", ");
-            const disableDelete = user.user_id === getRequesterId();
+    .map((user) => {
+        const courses = (user.courses || []).join(", ");
+        const disableDelete = user.user_id === getRequesterId();
 
-            return `
-                <tr>
-                    <td>
-                        <strong>${escapeHtml(user.name || user.username)}</strong>
-                        <span>${escapeHtml(user.user_id || "")}</span>
-                    </td>
-                    <td>${escapeHtml(user.role || "")}</td>
-                    <td>${escapeHtml(courses || "未設定")}</td>
-                    <td>
-                        <button
-                            type="button"
-                            class="button danger small"
-                            data-delete-user="${escapeHtml(user.user_id || "")}"
-                            ${disableDelete ? "disabled" : ""}
-                        >
-                            刪除
-                        </button>
-                    </td>
-                </tr>
-            `;
-        })
-        .join("");
+        return `
+            <tr>
+                <td>
+                    <strong>${escapeHtml(user.name || user.username)}</strong>
+                    <span>${escapeHtml(user.user_id || "")}</span>
+                </td>
+
+                <td>${escapeHtml(user.role || "")}</td>
+
+                <td>
+                    ${escapeHtml(courses || "未設定")}
+                </td>
+
+                <td>
+                    <button
+                        type="button"
+                        class="button success small"
+                        data-manage-course="${escapeHtml(user.user_id || "")}"
+                    >
+                        管理課程
+                    </button>
+
+                    <button
+                        type="button"
+                        class="button danger small"
+                        data-delete-user="${escapeHtml(user.user_id || "")}"
+                        ${disableDelete ? "disabled" : ""}
+                    >
+                        刪除
+                    </button>
+                </td>
+            </tr>
+        `;
+    })
+    .join("");
 
     document.querySelectorAll("[data-delete-user]").forEach((button) => {
         button.addEventListener("click", () => {
             deleteUser(button.dataset.deleteUser);
         });
     });
+
+    document.querySelectorAll("[data-manage-course]").forEach((button) => {
+        button.addEventListener("click", () => {
+            const userId = button.dataset.manageCourse;
+            manageUserCourses(userId);
+        });
+    });
+}
+
+function manageUserCourses(userId) {
+    console.log("管理課程:", userId);
+
+    // 之後可以在這裡：
+    // 1. 開 modal
+    // 2. 載入該使用者課程
+    // 3. 新增 / 移除課程
+
+    openCourseModal(userId);
 }
 
 async function createUser() {
