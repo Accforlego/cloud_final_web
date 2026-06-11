@@ -1,10 +1,5 @@
-async function getCurrentUser() {
-
-    const data = await data_api(
-        `/users?user_id=${getRequesterId()}`
-    );
-
-    return data.users?.[0] || null;
+function getCurrentUser() {
+    return JSON.parse(localStorage.getItem("examUser") || "null");
 }
 
 function hasCompleteProfile(user) {
