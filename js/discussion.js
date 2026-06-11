@@ -15,10 +15,12 @@ async function loadDiscussionFiles() {
         fileList.innerHTML = "<p class='muted'>無法載入資料。</p>";
         setStatus("filesStatus", error.message, "err");
     }
+    
 }
 
 function renderFiles(files) {
     const fileList = document.getElementById("fileList");
+    const fileSelect = document.getElementById("fileCourseSelect");
     if (!files.length) {
         fileList.innerHTML = `<div class="empty-state"><p>目前沒有可討論的考古題</p></div>`;
         return;
@@ -34,11 +36,31 @@ function renderFiles(files) {
         `;
     }).join("");
 
+    fileSelect.innerHTML =
+    `<option value="">全部課程</option>` +
+    courses.map(course => {
+
+        const id =
+            escapeHtml(course.course_id || "");
+
+        const name =
+            escapeHtml(course.course_name || "");
+
+
+        return `
+        <option value="${id}">
+            ${id} - ${name}
+        </option>
+        `;
+
+    }).join("");
+
     document.querySelectorAll(".file-card").forEach((button) => {
         button.addEventListener("click", () => {
             loadDiscussionDetail(button.dataset.fileId);
         });
     });
+    
 }
 
 async function loadDiscussionDetail(fileId) {
