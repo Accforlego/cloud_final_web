@@ -413,7 +413,7 @@ async function loadFiles() {
         let url =
             `/files?user_id=${encodeURIComponent(getRequesterId())}`;
 
-
+        console.log("選擇的課程 ID:", courseId);
         // 有選課程才加入 filter
         if (courseId) {
             url += 
