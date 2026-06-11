@@ -1,97 +1,89 @@
 let selectedFileId = null;
 let currentComments = [];
-const authSession = null;
 
-const userCourses = null;
+async function loadFilter() {
 
-async function loadDiscussionFiles() {
     const user = getCurrentUser();
+
     if (!user) return;
-    authSession = JSON.parse(localStorage.getItem("examAuthSession") || "null");
-    userCourses = user.courses || [];
-    const fileList = document.getElementById("fileList");
+
+
     try {
-        setStatus("filesStatus", "正在載入可討論的考古題...");
-        const data = await data_api(`/files?user_id=${encodeURIComponent(user.user_id)}`);
-        renderFiles(data.files || []);
-        setStatus("filesStatus", "");
+
+        const data = await data_api("/courses");
+
+
+        const allCourses =
+            data.courses || [];
+
+
+        // 只保留 user.courses
+        const userCourses =
+            user.courses || [];
+
+
+        const filteredCourses =
+            allCourses.filter(course =>
+                userCourses.includes(
+                    course.course_id
+                )
+            );
+
+
+        renderFilter(filteredCourses);
+
+
     } catch (error) {
-        fileList.innerHTML = "<p class='muted'>無法載入資料。</p>";
-        setStatus("filesStatus", error.message, "err");
+
+        console.error(
+            "load filter failed:",
+            error
+        );
+
     }
-    
 }
 
-function renderFiles(files) {
-    console.log(userCourses);
-
-    const fileList =
-        document.getElementById("fileList");
+function renderFilter(courses, userCourses) {
 
     const fileSelect =
         document.getElementById("fileCourseSelect");
 
 
-    if (!files.length) {
-        fileList.innerHTML =
-        `<div class="empty-state">
-            <p>目前沒有可討論的考古題</p>
-        </div>`;
-
-        return;
-    }
-
-
-    fileList.innerHTML =
-        files.map((file) => {
-
-            const activeClass =
-                file.file_id === selectedFileId
-                ? " is-active"
-                : "";
-
-
-            return `
-            <button
-                type="button"
-                class="file-card${activeClass}"
-                data-file-id="${file.file_id}">
-
-                <strong>
-                ${escapeHtml(file.filename || "未命名檔案")}
-                </strong>
-
-                <span>
-                ${escapeHtml(formatCourseName(file.course))}
-                </span>
-
-            </button>
-            `;
-
-        }).join("");
+    if (!fileSelect) return;
 
 
 
-    // ⭐ 只顯示 user.courses
+    // 只留下使用者有的課程
     const availableCourses =
         courses.filter(course =>
-            userCourses.includes(course.course_id)
+            userCourses.includes(
+                course.course_id
+            )
         );
 
 
 
     fileSelect.innerHTML =
-        `<option value="">
+        `
+        <option value="">
             全部課程
-        </option>` +
+        </option>
+        `
+
+        +
 
         availableCourses.map(course => {
 
             const id =
-                escapeHtml(course.course_id || "");
+                escapeHtml(
+                    course.course_id || ""
+                );
+
 
             const name =
-                escapeHtml(course.course_name || "");
+                escapeHtml(
+                    course.course_name || ""
+                );
 
 
             return `
@@ -102,20 +94,45 @@ function renderFiles(files) {
 
         }).join("");
 
+}
 
+async function loadDiscussionFiles() {
+    const user = getCurrentUser();
+    if (!user) return;
 
-    document
-    .querySelectorAll(".file-card")
-    .forEach(button => {
+    const fileList = document.getElementById("fileList");
+    try {
+        setStatus("filesStatus", "正在載入可討論的考古題...");
+        const data = await data_api(`/files?user_id=${encodeURIComponent(user.user_id)}`);
+        renderFiles(data.files || []);
+        setStatus("filesStatus", "");
+    } catch (error) {
+        fileList.innerHTML = "<p class='muted'>無法載入資料。</p>";
+        setStatus("filesStatus", error.message, "err");
+    }
+}
 
+function renderFiles(files) {
+    const fileList = document.getElementById("fileList");
+    if (!files.length) {
+        fileList.innerHTML = `<div class="empty-state"><p>目前沒有可討論的考古題</p></div>`;
+        return;
+    }
+
+    fileList.innerHTML = files.map((file) => {
+        const activeClass = file.file_id === selectedFileId ? " is-active" : "";
+        return `
+            <button type="button" class="file-card${activeClass}" data-file-id="${file.file_id}">
+                <strong>${escapeHtml(file.filename || "未命名檔案")}</strong>
+                <span>${escapeHtml(formatCourseName(file.course))}</span>
+            </button>
+        `;
+    }).join("");
+
+    document.querySelectorAll(".file-card").forEach((button) => {
         button.addEventListener("click", () => {
-
-            loadDiscussionDetail(
-                button.dataset.fileId
-            );
-
+            loadDiscussionDetail(button.dataset.fileId);
         });
-
     });
 }
 
@@ -296,7 +313,8 @@ function appendCommentToUI(c) {
 document.addEventListener("DOMContentLoaded", () => {
     const user = requireLogin();
     if (!user) return;
-    loadDiscussionFiles();
+    // loadDiscussionFiles();
+    loadFilter();
 });
 
 
