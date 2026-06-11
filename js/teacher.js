@@ -585,7 +585,7 @@ function openUserCourseModal(userId) {
     modal.classList.remove("hidden");
 
     loadUsersCourses(userId);
-    loadUsers()
+    loadUsers();
 }
 
 async function initializeTeacherPage() {
