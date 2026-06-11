@@ -1,10 +1,14 @@
 let selectedFileId = null;
 let currentComments = [];
+const authSession = null;
+
+const userCourses = null;
 
 async function loadDiscussionFiles() {
     const user = getCurrentUser();
     if (!user) return;
-
+    authSession = JSON.parse(localStorage.getItem("examAuthSession") || "null");
+    userCourses = user.courses || [];
     const fileList = document.getElementById("fileList");
     try {
         setStatus("filesStatus", "正在載入可討論的考古題...");
@@ -19,11 +23,7 @@ async function loadDiscussionFiles() {
 }
 
 function renderFiles(files) {
-    const authSession =
-    JSON.parse(localStorage.getItem("examAuthSession") || "null");
-
-    const userCourses =
-        authSession?.user?.courses || [];
+    console.log(userCourses);
 
     const fileList =
         document.getElementById("fileList");
