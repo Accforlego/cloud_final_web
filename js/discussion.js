@@ -48,6 +48,7 @@ async function loadFilter() {
 }
 
 async function loadTAdata() {
+    const user = await getCurrentUser();
     const data = await talist_api(
         `?user_id=${encodeURIComponent(user.user_id)}`,
         {
