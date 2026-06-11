@@ -42,7 +42,7 @@ async function loadFilter() {
     }
 }
 
-function renderFilter(courses, userCourses) {
+function renderFilter(userCourses) {
 
     const fileSelect =
         document.getElementById("fileCourseSelect");
