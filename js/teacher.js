@@ -829,7 +829,7 @@ async function update_user_courses() {
 }
 
 async function initializeTeacherPage() {
-    const user = requireTeacher();
+    const user = await requireTeacher();
 
     if (!user) {
         return;
