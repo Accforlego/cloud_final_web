@@ -79,19 +79,17 @@ async function loadUsersCourses(user_id) {
             `/user-courses?user_id=${encodeURIComponent(user_id)}`
         );
         console.log("使用者課程資料:", data.courses);
-        // const selectedSet = new Set(
-        //     data.courses.map(c => c.course_id)
-        // );
-        // console.log("使用者選取的課程 ID:", selectedSet);
-        // document
-        // .querySelectorAll("#stucrsContent input[type='checkbox']")
-        // .forEach(cb => {
+        const selectedSet = new Set(data.courses);
+        console.log("使用者選取的課程 ID:", selectedSet);
+        document
+        .querySelectorAll("#stucrsContent input[type='checkbox']")
+        .forEach(cb => {
 
-        //     const courseId = cb.dataset.courseId;
+            const courseId = cb.dataset.courseId;
 
-        //     cb.checked = selectedSet.has(courseId);
-        // });
-        // setStatus("usercrsStatus", "");
+            cb.checked = selectedSet.has(courseId);
+        });
+        setStatus("usercrsStatus", "");
     } catch (error) {
         tbody.innerHTML = "<tr><td colspan='4'>無法載入使用者課程。</td></tr>";
         setStatus("usercrsStatus", error.message, "err");
