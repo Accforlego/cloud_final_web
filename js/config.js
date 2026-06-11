@@ -2,7 +2,6 @@ const APP_CONFIG = {
     DATA_API_BASE_URL: "https://xl9llcfw6d.execute-api.ap-southeast-2.amazonaws.com/prod",
     PROFILE_API_BASE_URL: "https://cj7zdm4z38.execute-api.ap-southeast-2.amazonaws.com",
     TALIST_API_BASE_URL: "https://c38guilgvk.execute-api.ap-southeast-2.amazonaws.com/default/TAlist_handler",
-    STUCRS_API_BASE_URL: "https://h8w2ocdqg7.execute-api.ap-southeast-2.amazonaws.com/default/stucrsre-handler",
 
     // Replace these values after creating the Cognito User Pool app client.
     COGNITO_DOMAIN: "https://ap-southeast-2mcs3uji9u.auth.ap-southeast-2.amazoncognito.com",

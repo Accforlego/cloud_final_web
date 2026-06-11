@@ -70,6 +70,23 @@ async function loadUsers() {
     }
 }
 
+async function loadUsersCourses(user_id) {
+    const tbody = document.getElementById("stucrsContent");
+
+    try {
+        setStatus("usercrsStatus", "正在載入使用者...");
+        const data = await data_api(
+            `/user-courses?user_id=${encodeURIComponent(user_id)}`
+        );
+        console.log("使用者課程資料:", data);
+        renderUsers(data.users || []);
+        setStatus("usercrsStatus", "");
+    } catch (error) {
+        tbody.innerHTML = "<tr><td colspan='4'>無法載入使用者課程。</td></tr>";
+        setStatus("usercrsStatus", error.message, "err");
+    }
+}
+
 function renderUsers(users) {
     const tbody = document.getElementById("usersTableBody");
 
@@ -100,7 +117,7 @@ function renderUsers(users) {
                     <button
                         type="button"
                         class="button success small"
-                        data-manage-course="${escapeHtml(user.user_id || "")}"
+                        onclick='openUserCourseModal(${JSON.stringify(user.user_id)})'
                     >
                         管理課程
                     </button>
@@ -549,8 +566,19 @@ function renderCandidateTAs(list) {
     `).join("");
 }
 
-function addTA() {
-    
+function openUserCourseModal(userId) {
+
+    const modal = document.getElementById("stucrsModal");
+
+    modal.classList.remove("hidden");
+
+
+    // 清空舊資料
+    document.getElementById("stucrsContent").innerHTML =
+        "載入中...";
+
+
+    loadUsersCourses(userId);
 }
 
 async function initializeTeacherPage() {
@@ -604,6 +632,16 @@ async function initializeTeacherPage() {
         if (e.target.id === "taModal") {
             document.getElementById("taModal").classList.add("hidden");
         }
+    });
+
+    document
+    .getElementById("closestucrsModalBtn")
+    .addEventListener("click",()=>{
+
+        document
+        .getElementById("stucrsModal")
+        .classList.add("hidden");
+
     });
 }
 
