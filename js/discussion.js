@@ -9,16 +9,17 @@ async function loadFilter() {
     try {
 
         const data = await data_api("/courses");
-        console.log("courses data:", data);
 
         const allCourses =
             data.data || [];
-
+        
 
         // 只保留 user.courses
         const userCourses =
             user.courses || [];
 
+        console.log(allCourses);
+        console.log(userCourses);
 
         const filteredCourses =
             allCourses.filter(course =>
