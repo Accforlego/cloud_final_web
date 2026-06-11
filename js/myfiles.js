@@ -2,7 +2,7 @@ let selectedFileId = null;
 
 async function loadMyFiles() {
     const user = getCurrentUser();
-
+    console.log("Current user:", user);
     if (!user) {
         return;
     }
