@@ -13,6 +13,7 @@ function parseCoursesInput(value) {
 
 async function requireTeacher() {
     const user = await requireLogin();
+    
 
     if (!user) {
         window.location.href = "index.html";
