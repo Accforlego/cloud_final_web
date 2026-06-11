@@ -397,6 +397,6 @@ async function unpinComment(fileId, timestamp) {
     }
 }
 
-document.getElementById("courseSelect").addEventListener("change", () => {
+document.getElementById("fileCourseSelect").addEventListener("change", () => {
     loadDiscussionFiles();
 });
