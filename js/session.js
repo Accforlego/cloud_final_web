@@ -7,6 +7,20 @@ async function getCurrentUser() {
     return normalizeUser(data.users?.[0]);
 }
 
+function decodeJwtPayload(token) {
+    const payload = token.split(".")[1];
+    const base64 = payload.replaceAll("-", "+").replaceAll("_", "/");
+    const padded = base64.padEnd(base64.length + ((4 - base64.length % 4) % 4), "=");
+    const json = decodeURIComponent(
+        atob(padded)
+            .split("")
+            .map((char) => `%${char.charCodeAt(0).toString(16).padStart(2, "0")}`)
+            .join("")
+    );
+
+    return JSON.parse(json);
+}
+
 function normalizeUser(user) {
 
     if (!user) return null;
