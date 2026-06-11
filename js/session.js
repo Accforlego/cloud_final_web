@@ -6,29 +6,51 @@ function hasCompleteProfile(user) {
     return Boolean(user?.role && user?.courses?.length);
 }
 
-function requireLogin() {
-    const user = getCurrentUser();
+async function requireLogin() {
+
+    const user = await getCurrentUser(); // ⭐ 改成一定從 API 拿最新
 
     if (!user) {
         window.location.href = "index.html";
         return null;
     }
 
-    const page = window.location.pathname.split("/").pop() || "index.html";
+    const page =
+        window.location.pathname.split("/").pop() || "index.html";
 
+
+    // ❗ profile incomplete → 強制導向
     if (page !== "profile.html" && !hasCompleteProfile(user)) {
         window.location.href = "profile.html";
         return null;
     }
 
-    const currentUserText = document.getElementById("currentUserText");
+
+    // ⭐ 更新 local cache（可選）
+    localStorage.setItem(
+        `examProfile:${user.user_id}`,
+        JSON.stringify({
+            role: user.role,
+            courses: user.courses
+        })
+    );
+
+
+    // ⭐ 更新 UI
+    const currentUserText =
+        document.getElementById("currentUserText");
+
 
     if (currentUserText) {
-        const roleLabel = ROLE_NAMES[user.role] || user.role;
+
+        const roleLabel =
+            ROLE_NAMES[user.role] || user.role;
+
         currentUserText.textContent = roleLabel
             ? `${user.name || user.email || user.user_id} (${roleLabel})`
             : user.name || user.email || user.user_id;
     }
+
 
     return user;
 }
@@ -55,12 +77,12 @@ function logout() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const logoutBtn = document.getElementById("logoutBtn");
 
     if (logoutBtn) {
         logoutBtn.addEventListener("click", logout);
     }
 
-    requireLogin();
+    await requireLogin();
 });

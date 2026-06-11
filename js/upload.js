@@ -529,8 +529,8 @@ async function confirmOcrText() {
     }
 }
 
-document.addEventListener("DOMContentLoaded", () => {
-    const user = requireLogin();
+document.addEventListener("DOMContentLoaded", async () => {
+    const user = await requireLogin();
 
     if (!user) {
         return;
