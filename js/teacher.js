@@ -404,15 +404,40 @@ async function loadFiles() {
         setStatus("filesStatus", "正在載入考古題...");
         tbody.innerHTML = "<tr><td colspan='5'>載入中...</td></tr>";
 
-        const data = await data_api(
-            `/files?user_id=${encodeURIComponent(getRequesterId())}`
-        );
+
+        // 取得 dropdown 選擇的課程
+        const courseId =
+            document.getElementById("fileCourseSelect")?.value || "";
+
+
+        let url =
+            `/files?user_id=${encodeURIComponent(getRequesterId())}`;
+
+
+        // 有選課程才加入 filter
+        if (courseId) {
+            url += 
+            `&course=${encodeURIComponent(courseId)}`;
+        }
+
+
+        const data = await data_api(url);
+
 
         renderFiles(data.files || []);
+
         setStatus("filesStatus", "");
+
     } catch (error) {
-        tbody.innerHTML = "<tr><td colspan='5'>無法載入考古題。</td></tr>";
-        setStatus("filesStatus", error.message, "err");
+
+        tbody.innerHTML =
+            "<tr><td colspan='5'>無法載入考古題。</td></tr>";
+
+        setStatus(
+            "filesStatus",
+            error.message,
+            "err"
+        );
     }
 }
 
@@ -730,6 +755,14 @@ async function initializeTeacherPage() {
         document
         .getElementById("stucrsModal")
         .classList.add("hidden");
+
+    });
+
+    document
+    .getElementById("fileCourseSelect")
+    .addEventListener("change", () => {
+
+        loadFiles();
 
     });
 }
