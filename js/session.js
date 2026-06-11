@@ -3,8 +3,7 @@ async function getCurrentUser() {
     const claims = decodeJwtPayload(session.id_token);
 
     const data = await data_api(`/users?user_id=${claims.sub}`);
-    console.log("Fetched user data:", data);
-    return data.users?.[0];
+    return data.users[0];
 }
 
 function decodeJwtPayload(token) {
