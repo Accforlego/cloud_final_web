@@ -34,18 +34,25 @@ function requireLogin() {
 }
 
 function logout() {
-    const logoutUrl = new URL(`${APP_CONFIG.COGNITO_DOMAIN}/logout`);
 
-    localStorage.clear(); // ⭐ 比 removeItem 更乾淨（建議）
-
+    localStorage.clear();
     sessionStorage.clear();
 
-    logoutUrl.search = new URLSearchParams({
-        client_id: APP_CONFIG.COGNITO_CLIENT_ID,
-        logout_uri: APP_CONFIG.COGNITO_LOGOUT_URI
-    }).toString();
+    // 🔥 強制清 memory state
+    window.name = "";
 
-    window.location.href = logoutUrl.toString();
+    // 🔥 直接 reload 清 SPA state
+    window.location.replace(
+        `${APP_CONFIG.COGNITO_DOMAIN}/logout?` +
+        new URLSearchParams({
+            client_id: APP_CONFIG.COGNITO_CLIENT_ID,
+            logout_uri: APP_CONFIG.COGNITO_LOGOUT_URI
+        })
+    );
+
+    if (!localStorage.getItem("examAuthSession")) {
+        window.location.href = "index.html";
+    }
 }
 
 document.addEventListener("DOMContentLoaded", () => {
