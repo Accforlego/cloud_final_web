@@ -4,6 +4,7 @@ async function getCurrentUser() {
 
     const data = await data_api(`/users?user_id=${claims.sub}`);
     console.log("Fetched user data:", data);
+    console.log("Fetched user data:", data.users[0]);
     return data.users[0];
 }
 
