@@ -1,5 +1,6 @@
 let selectedFileId = null;
 let currentComments = [];
+let tacourse = [];
 
 async function loadFilter() {
 
@@ -44,6 +45,18 @@ async function loadFilter() {
         );
 
     }
+}
+
+async function loadTAdata() {
+    const data = await talist_api(
+        `?user_id=${encodeURIComponent(user.user_id)}`,
+        {
+            method: "GET"
+        }
+    );
+
+    tacourse = data.courses || [];
+    console.log("TA courses:", tacourse);
 }
 
 function renderFilter(userCourses) {
