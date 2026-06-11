@@ -4,7 +4,7 @@ let currentComments = [];
 async function loadFilter() {
 
     const user = getCurrentUser();
-    console.
+    console.log("current user:", user);
     if (!user) return;
 
     try {
