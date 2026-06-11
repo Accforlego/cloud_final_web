@@ -220,17 +220,17 @@ async function renderCommentsList() {
     const user = await getCurrentUser();
     const courseId =
         document.getElementById("fileCourseSelect")?.value || "";
-    const isTeacher = user && (user.role === 'teacher' || tacourse.includes(courseId));
+    const isTeacherorTA = user && (user.role === 'teacher' || tacourse.includes(courseId));
 
     if (currentComments.length === 0) {
         commentsList.innerHTML = `<div class="empty-state"><p>目前還沒有人留言，來當第一個討論的人吧！</p></div>`;
     } else {
         commentsList.innerHTML = currentComments.map(c => {
-            const pinButtonHtml = (isTeacher && !c.is_best_answer)
+            const pinButtonHtml = (isTeacherorTA && !c.is_best_answer)
                 ? `<button type="button" class="button ghost" style="padding: 4px 8px; min-height: auto; font-size: 12px; margin-left: auto;" onclick="pinComment('${c.file_id}', ${c.timestamp})">設為正解</button>`
                 : '';
 
-            const unpinButtonHtml = (isTeacher && c.is_best_answer)
+            const unpinButtonHtml = (isTeacherorTA && c.is_best_answer)
                 ? `<button type="button" class="button ghost" style="padding: 4px 8px; min-height: auto; font-size: 12px; margin-left: auto; color: var(--danger);" onclick="unpinComment('${c.file_id}', ${c.timestamp})">取消置頂</button>`
                 : '';
 
@@ -375,7 +375,10 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function pinComment(fileId, timestamp) {
     const user = await getCurrentUser();
-    if (!user || user.role !== 'teacher') return;
+    const courseId =
+        document.getElementById("fileCourseSelect")?.value || "";
+    const isTeacherorTA = user && (user.role === 'teacher' || tacourse.includes(courseId));
+    if (!user || !isTeacherorTA) return;
 
     try {
         await data_api('/comments/pin', {
@@ -401,7 +404,10 @@ async function pinComment(fileId, timestamp) {
 
 async function unpinComment(fileId, timestamp) {
     const user = await getCurrentUser();
-    if (!user || user.role !== 'teacher') return;
+    const courseId =
+        document.getElementById("fileCourseSelect")?.value || "";
+    const isTeacherorTA = user && (user.role === 'teacher' || tacourse.includes(courseId));
+    if (!user || !isTeacherorTA) return;
 
     try {
         await data_api('/comments/pin', {
