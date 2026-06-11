@@ -78,9 +78,7 @@ async function loadUsersCourses(user_id) {
         const data = await data_api(
             `/user-courses?user_id=${encodeURIComponent(user_id)}`
         );
-        // console.log("使用者課程資料:", data.courses);
         const selectedSet = new Set(data.courses);
-        // console.log("使用者選取的課程 ID:", selectedSet);
         document
         .querySelectorAll("#stucrsContent input[type='checkbox']")
         .forEach(cb => {
@@ -530,25 +528,82 @@ async function loadTAs() {
     }
 }
 
-async function deleteTA(taId) {
+async function deleteTA(taId, userId, courseId) {
+
     if (!taId) {
         return;
     }
+
 
     if (!confirm(`確定要刪除嗎？`)) {
         return;
     }
 
+
     try {
-        await talist_api(`?id=${taId}`, {
+
+        // 1. 刪除 TA record
+        await talist_api(`?id=${encodeURIComponent(taId)}`, {
             method: "DELETE"
         });
 
-        setStatus("TAsStatus", "課程已刪除。", "ok");
 
-        await loadTAs();
+
+        // 2. 取得目前 user 課程
+        const userData = await data_api(
+            `/users?requester_id=${encodeURIComponent(getRequesterId())}&user_id=${encodeURIComponent(userId)}`
+        );
+
+
+        const user =
+            userData.users?.[0];
+
+
+        let courses =
+            user?.courses || [];
+
+
+
+        // 3. 移除該課程
+        courses =
+            courses.filter(c => c !== courseId);
+
+
+
+        // 4. 更新 users table
+        await data_api("/users/courses", {
+            method: "PUT",
+            body: JSON.stringify({
+
+                requester_id: getRequesterId(),
+
+                user_id: userId,
+
+                courses: courses
+            })
+        });
+
+
+
+        setStatus(
+            "TAsStatus",
+            "TA 已刪除。",
+            "ok"
+        );
+
+
+        await loadTAs(courseId);
+
+
     } catch (error) {
-        setStatus("TAsStatus", error.message, "err");
+
+        console.error(error);
+
+        setStatus(
+            "TAsStatus",
+            error.message,
+            "err"
+        );
     }
 }
 
@@ -570,6 +625,8 @@ function renderTAs(data) {
                             type="button"
                             class="button danger small"
                             data-ta-id="${TA.id}"
+                            data-user-id="${TA.user_id}"
+                            data-course-id="${TA.course_id}"
                         >
                             刪除
                         </button>
@@ -630,6 +687,82 @@ function renderCandidateTAs(list) {
             </button></td>
         </tr>
     `).join("");
+}
+
+async function addTAFromCandidate(userId, username) {
+
+    const courseId =
+        document.getElementById("courseSelect").value;
+
+
+    if (!courseId) {
+        alert("請先選擇課程");
+        return;
+    }
+
+
+    try {
+
+        // 1. 新增 TA
+        await talist_api("", {
+            method: "POST",
+            body: JSON.stringify({
+                course_id: courseId,
+                user_id: userId,
+                username: username
+            })
+        });
+
+
+
+        // 2. 取得該學生目前課程
+        const userData = await data_api(
+            `/users?requester_id=${encodeURIComponent(getRequesterId())}&user_id=${encodeURIComponent(userId)}`
+        );
+
+
+        const user =
+            userData.users?.[0];
+
+
+        let courses = user?.courses || [];
+
+
+        // 防止重複加入
+        if (!courses.includes(courseId)) {
+            courses.push(courseId);
+        }
+
+
+
+        // 3. 更新 users courses
+        await data_api("/users/courses", {
+            method: "PUT",
+            body: JSON.stringify({
+
+                requester_id: getRequesterId(),
+
+                user_id: userId,
+
+                courses: courses
+            })
+        });
+
+
+
+        // 4. 更新畫面
+        await loadTAs(courseId);
+        await loadCandidateTAs(courseId);
+
+
+    } catch (err) {
+
+        console.error(err);
+
+        alert(
+            "新增 TA 失敗: " + err.message
+        );
+    }
 }
 
 function openUserCourseModal(userId) {
@@ -724,8 +857,11 @@ async function initializeTeacherPage() {
         const btn = e.target.closest("[data-ta-id]");
         if (!btn) return;
     
-        const taId = btn.dataset.taId;
-        deleteTA(taId);
+        deleteTA(
+            btn.dataset.taId,
+            btn.dataset.userId,
+            btn.dataset.courseId
+        );
     });
 
     // 打開 modal
@@ -768,34 +904,3 @@ async function initializeTeacherPage() {
 }
 
 document.addEventListener("DOMContentLoaded", initializeTeacherPage);
-
-async function addTAFromCandidate(userId, username) {
-
-    const courseId = document.getElementById("courseSelect").value;
-
-    if (!courseId) {
-        alert("請先選擇課程");
-        return;
-    }
-
-    try {
-
-        await talist_api("", {
-            method: "POST",
-            body: JSON.stringify({
-                course_id: courseId,
-                user_id: userId,
-                username: username
-            })
-        });
-
-
-        // 新增成功後更新畫面
-        await loadTAs(courseId);
-        await loadCandidateTAs(courseId);
-
-    } catch (err) {
-        console.error(err);
-        alert("新增 TA 失敗: " + err.message);
-    }
-}
