@@ -232,7 +232,6 @@ async function deleteUser(userId) {
 
 async function loadCourses() {
     const tbody = document.getElementById("coursesTableBody");
-
     try {
         setStatus("coursesStatus", "正在載入課程...");
         tbody.innerHTML = "<tr><td colspan='3'>載入中...</td></tr>";
@@ -250,6 +249,7 @@ async function loadCourses() {
 function renderCourses(courses) {
     const tbody = document.getElementById("coursesTableBody");
     const select = document.getElementById("courseSelect")
+    const stucrsContent = document.getElementById("stucrsContent");
 
     if (!courses.length) {
         tbody.innerHTML = "<tr><td colspan='3'>目前沒有課程。</td></tr>";
@@ -296,6 +296,18 @@ function renderCourses(courses) {
             deleteCourse(button.dataset.deleteCourse);
         });
     });
+
+    stucrsContent.innerHTML = courses.map(course => {
+        const courseId = escapeHtml(course.course_id || "");
+        const courseName = escapeHtml(course.course_name || "");
+
+        return `
+            <label style="display:flex; gap:8px; align-items:center; margin:6px 0;">
+                <input type="checkbox" value="${courseId}" data-course-id="${courseId}">
+                <span>${courseId} - ${courseName}</span>
+            </label>
+        `;
+    }).join("");
 }
 
 async function createCourse() {
