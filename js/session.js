@@ -1,5 +1,26 @@
-function getCurrentUser() {
-    return JSON.parse(localStorage.getItem("examUser") || "null");
+async function getCurrentUser() {
+    const session = JSON.parse(localStorage.getItem("examAuthSession"));
+    const claims = decodeJwtPayload(session.id_token);
+
+    const data = await data_api(`/users?user_id=${claims.sub}`);
+
+    return normalizeUser(data.users?.[0]);
+}
+
+function normalizeUser(user) {
+
+    if (!user) return null;
+
+    return {
+        ...user,
+        courses: Array.isArray(user.courses)
+            ? user.courses
+            : user.courses?.L
+                ? user.courses.L.map(x => x.S)
+                : typeof user.courses === "string"
+                    ? user.courses.split(",")
+                    : []
+    };
 }
 
 function hasCompleteProfile(user) {
