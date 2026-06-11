@@ -48,16 +48,19 @@ async function loadFilter() {
 }
 
 async function loadTAdata() {
+
     const user = await getCurrentUser();
-    const data = await talist_api(
+
+    const res = await talist_api(
         `?user_id=${encodeURIComponent(user.user_id)}`,
         {
             method: "GET"
         }
     );
 
-    tacourse = data.courses || [];
-    console.log("TA courses:", data);
+    const tacourse = (data.data || []).map(item => item.course_id);
+
+    console.log("TA courses:", tacourse);
 }
 
 function renderFilter(userCourses) {
@@ -215,7 +218,9 @@ async function renderCommentsList() {
     if (!commentsList) return;
 
     const user = await getCurrentUser();
-    const isTeacher = user && user.role === 'teacher';
+    const courseId =
+        document.getElementById("fileCourseSelect")?.value || "";
+    const isTeacher = user && (user.role === 'teacher' || tacourse.includes(courseId));
 
     if (currentComments.length === 0) {
         commentsList.innerHTML = `<div class="empty-state"><p>目前還沒有人留言，來當第一個討論的人吧！</p></div>`;
