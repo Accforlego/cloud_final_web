@@ -387,7 +387,7 @@ document.addEventListener("DOMContentLoaded", async () => {
 
 async function loadJoinCourseOptions() {
 
-    const user = await getCurrentUser();
+    // const user = await getCurrentUser();
 
     const res = await data_api("/courses");
 
@@ -406,6 +406,25 @@ async function loadJoinCourseOptions() {
         </option>
     `).join("");
 }
+
+document.getElementById("confirmJoinCourseBtn")
+.addEventListener("click", async () => {
+
+    const courseId = document.getElementById("joinCourseSelect").value;
+    const user = await getCurrentUser();
+
+    if (!courseId) return alert("請選擇課程");
+
+    await data_api("/course-join-request", {
+        method: "POST",
+        body: JSON.stringify({
+            user_id: user.user_id,
+            course_id: courseId
+        })
+    });
+
+    alert("已送出申請");
+});
 
 async function pinComment(fileId, timestamp) {
     // const user = await getCurrentUser();

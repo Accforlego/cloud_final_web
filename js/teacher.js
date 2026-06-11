@@ -1,4 +1,5 @@
 let teacherUser = null;
+let user = null;
 
 function getRequesterId() {
     return teacherUser ? teacherUser.user_id : "";
@@ -13,7 +14,7 @@ function parseCoursesInput(value) {
 
 async function requireTeacher() {
     const user = await requireLogin();
-    
+
 
     if (!user) {
         window.location.href = "index.html";
@@ -162,11 +163,6 @@ function renderUsers(users) {
 function manageUserCourses(userId) {
     console.log("管理課程:", userId);
 
-    // 之後可以在這裡：
-    // 1. 開 modal
-    // 2. 載入該使用者課程
-    // 3. 新增 / 移除課程
-
     openCourseModal(userId);
 }
 
@@ -265,25 +261,52 @@ function renderCourses(courses) {
         return;
     }
 
+    const userCourses = user.courses || [];
+    
     tbody.innerHTML = courses
-        .map((course) => {
-            return `
-                <tr>
-                    <td>${escapeHtml(course.course_id || "")}</td>
-                    <td>${escapeHtml(course.course_name || "")}</td>
-                    <td>
+    .map((course) => {
+
+        const courseId = course.course_id || "";
+
+        const isJoined = userCourses.includes(courseId);
+
+        return `
+            <tr>
+                <td>${escapeHtml(courseId)}</td>
+
+                <td>
+                    ${escapeHtml(course.course_name || "")}
+                </td>
+
+                <td>
+                    ${
+                        isJoined
+                        ?
+                        `
                         <button
                             type="button"
                             class="button danger small"
-                            data-delete-course="${escapeHtml(course.course_id || "")}"
+                            data-delete-course="${escapeHtml(courseId)}"
                         >
                             刪除
                         </button>
-                    </td>
-                </tr>
-            `;
-        })
-        .join("");
+                        `
+                        :
+                        `
+                        <button
+                            type="button"
+                            class="button success small"
+                            data-add-course="${escapeHtml(courseId)}"
+                        >
+                            加入
+                        </button>
+                        `
+                    }
+                </td>
+            </tr>
+        `;
+    })
+    .join("");
 
     select.innerHTML = `
         <option value="">選擇課程</option>
@@ -303,6 +326,12 @@ function renderCourses(courses) {
     document.querySelectorAll("[data-delete-course]").forEach((button) => {
         button.addEventListener("click", () => {
             deleteCourse(button.dataset.deleteCourse);
+        });
+    });
+
+    document.querySelectorAll("[data-add-course]").forEach((button) => {
+        button.addEventListener("click", () => {
+            addCourse(button.dataset.addCourse);
         });
     });
 
@@ -388,6 +417,50 @@ async function deleteCourse(courseId) {
         });
 
         setStatus("coursesStatus", "課程已刪除。", "ok");
+
+        await loadCourses();
+        await loadDashboard();
+    } catch (error) {
+        setStatus("coursesStatus", error.message, "err");
+    }
+}
+
+async function addCourse(courseId) {
+    if (!courseId) {
+        return;
+    }
+
+    try {
+        const userData = await data_api(
+            `/users?requester_id=${encodeURIComponent(getRequesterId())}&user_id=${encodeURIComponent(user.user_id)}`
+        );
+
+
+        const user =
+            userData.users?.[0];
+
+
+        let courses = user?.courses || [];
+
+
+        // 防止重複加入
+        if (!courses.includes(courseId)) {
+            courses.push(courseId);
+        }
+
+
+
+        await data_api("/users/courses", {
+            method: "PUT",
+            body: JSON.stringify({
+
+                requester_id: getRequesterId(),
+
+                user_id: user.user_id,
+
+                courses: courses
+            })
+        });
 
         await loadCourses();
         await loadDashboard();
@@ -830,7 +903,7 @@ async function update_user_courses() {
 }
 
 async function initializeTeacherPage() {
-    const user = await requireTeacher();
+    user = await requireTeacher();
 
     if (!user) {
         return;
