@@ -589,11 +589,65 @@ function renderCandidateTAs(list) {
 
 function openUserCourseModal(userId) {
 
+    const confirmBtn = document.getElementById("confirmaddtocourse");
+
+    confirmBtn.dataset.userId = userId;
+
     const modal = document.getElementById("stucrsModal");
 
     modal.classList.remove("hidden");
 
     loadUsersCourses(userId);
+}
+
+async function update_user_courses() {
+
+    const confirmBtn =
+        document.getElementById("confirmaddtocourse");
+
+    const userId = confirmBtn.dataset.userId;
+
+    if (!userId) {
+        alert("缺少 user_id");
+        return;
+    }
+
+    // 2️⃣ 抓 checkbox 選取結果
+    const selectedCourses = [
+        ...document.querySelectorAll("#stucrsContent input[type='checkbox']")
+    ]
+    .filter(cb => cb.checked)
+    .map(cb => cb.dataset.courseId);
+
+    console.log("selectedCourses:", selectedCourses);
+
+    // 3️⃣ 呼叫 API
+    try {
+
+        await data_api("/users/courses", {
+            method: "PUT",
+            body: JSON.stringify({
+                requester_id: getRequesterId(),
+                user_id: userId,
+                courses: selectedCourses
+            })
+        });
+
+        // 4️⃣ 成功提示
+        alert("課程更新成功");
+
+        // 5️⃣ 關閉 modal
+        document.getElementById("stucrsModal")
+            .classList.add("hidden");
+
+        // 6️⃣ refresh UI（重新載入資料）
+        loadUsersCourses(userId);
+
+    } catch (err) {
+
+        console.error(err);
+        alert("更新失敗：" + err.message);
+    }
 }
 
 async function initializeTeacherPage() {
