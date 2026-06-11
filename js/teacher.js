@@ -584,12 +584,6 @@ function openUserCourseModal(userId) {
 
     modal.classList.remove("hidden");
 
-
-    // 清空舊資料
-    document.getElementById("stucrsContent").innerHTML =
-        "載入中...";
-
-
     loadUsersCourses(userId);
 }
 
