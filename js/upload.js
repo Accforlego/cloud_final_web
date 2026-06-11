@@ -5,6 +5,8 @@ let handwritingCanvas = null;
 let handwritingCtx = null;
 let isDrawing = false;
 let hasHandwriting = false;
+let cameraStream = null;
+let capturedPhotoFile = null;
 
 async function getCourses() {
     try {
@@ -62,20 +64,35 @@ function handleCategoryChange() {
     const fileInput = document.getElementById("fileInput");
     const fileUploadArea = document.getElementById("fileUploadArea");
     const handwritingArea = document.getElementById("handwritingArea");
+    const cameraArea = document.getElementById("cameraArea");
 
     selectedFile = null;
+    capturedPhotoFile = null;
     fileInput.value = "";
     document.getElementById("fileName").textContent = "尚未選擇檔案";
+    resetCameraPreview();
 
     if (fileCategory === "handwriting") {
+        stopCamera();
         fileUploadArea.hidden = true;
         handwritingArea.hidden = false;
+        cameraArea.hidden = true;
         window.requestAnimationFrame(resizeHandwritingCanvas);
         return;
     }
 
+    if (fileCategory === "camera") {
+        fileUploadArea.hidden = true;
+        handwritingArea.hidden = true;
+        cameraArea.hidden = false;
+        startCamera();
+        return;
+    }
+
+    stopCamera();
     fileUploadArea.hidden = false;
     handwritingArea.hidden = true;
+    cameraArea.hidden = true;
     fileInput.accept = fileCategory === "pdf" ? ".pdf" : ".png,.jpg,.jpeg";
 }
 
@@ -216,6 +233,111 @@ function getHandwritingFile() {
     });
 }
 
+async function startCamera() {
+    const cameraPreview = document.getElementById("cameraPreview");
+
+    if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
+        setStatus("uploadStatus", "此瀏覽器不支援直接開啟相機。", "err");
+        return;
+    }
+
+    stopCamera();
+    resetCameraPreview();
+
+    try {
+        cameraStream = await navigator.mediaDevices.getUserMedia({
+            video: {
+                facingMode: { ideal: "environment" }
+            },
+            audio: false
+        });
+        cameraPreview.srcObject = cameraStream;
+        setStatus("uploadStatus", "");
+    } catch (error) {
+        setStatus("uploadStatus", "無法開啟相機，請確認瀏覽器權限。", "err");
+    }
+}
+
+function stopCamera() {
+    if (!cameraStream) {
+        return;
+    }
+
+    cameraStream.getTracks().forEach((track) => track.stop());
+    cameraStream = null;
+
+    const cameraPreview = document.getElementById("cameraPreview");
+
+    if (cameraPreview) {
+        cameraPreview.srcObject = null;
+    }
+}
+
+function resetCameraPreview() {
+    const cameraPreview = document.getElementById("cameraPreview");
+    const cameraCanvas = document.getElementById("cameraCanvas");
+    const retakePhotoBtn = document.getElementById("retakePhotoBtn");
+
+    if (cameraPreview) {
+        cameraPreview.hidden = false;
+    }
+
+    if (cameraCanvas) {
+        cameraCanvas.hidden = true;
+    }
+
+    if (retakePhotoBtn) {
+        retakePhotoBtn.disabled = true;
+    }
+}
+
+function capturePhoto() {
+    const cameraPreview = document.getElementById("cameraPreview");
+    const cameraCanvas = document.getElementById("cameraCanvas");
+    const retakePhotoBtn = document.getElementById("retakePhotoBtn");
+
+    if (!cameraStream || !cameraPreview.videoWidth || !cameraPreview.videoHeight) {
+        setStatus("uploadStatus", "請先開啟相機。", "err");
+        return;
+    }
+
+    cameraCanvas.width = cameraPreview.videoWidth;
+    cameraCanvas.height = cameraPreview.videoHeight;
+    cameraCanvas.getContext("2d").drawImage(cameraPreview, 0, 0);
+    cameraCanvas.hidden = false;
+    cameraPreview.hidden = true;
+    retakePhotoBtn.disabled = false;
+
+    cameraCanvas.toBlob((blob) => {
+        if (!blob) {
+            setStatus("uploadStatus", "無法產生照片，請再試一次。", "err");
+            return;
+        }
+
+        const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+        capturedPhotoFile = new File([blob], `camera-photo-${timestamp}.png`, { type: "image/png" });
+        setStatus("uploadStatus", "已拍照，可以上傳並辨識。", "ok");
+    }, "image/png");
+}
+
+function retakePhoto() {
+    capturedPhotoFile = null;
+    resetCameraPreview();
+    setStatus("uploadStatus", "");
+
+    if (!cameraStream) {
+        startCamera();
+    }
+}
+
+function getCameraFile() {
+    if (!capturedPhotoFile) {
+        throw new Error("請先拍照。");
+    }
+
+    return capturedPhotoFile;
+}
+
 function setReviewState(label) {
     document.getElementById("reviewBadge").textContent = label;
 }
@@ -224,6 +346,7 @@ async function uploadFile() {
     const user = getCurrentUser();
     const course = document.getElementById("courseSelect").value;
     const fileCategory = document.getElementById("fileCategory").value;
+    const uploadCategory = fileCategory === "camera" ? "image" : fileCategory;
     let uploadTargetFile = selectedFile;
 
     if (!user) {
@@ -236,7 +359,7 @@ async function uploadFile() {
         return;
     }
 
-    if (fileCategory !== "handwriting" && !selectedFile) {
+    if (!["handwriting", "camera"].includes(fileCategory) && !selectedFile) {
         setStatus("uploadStatus", "請選擇檔案。", "err");
         return;
     }
@@ -244,6 +367,10 @@ async function uploadFile() {
     try {
         if (fileCategory === "handwriting") {
             uploadTargetFile = await getHandwritingFile();
+        }
+
+        if (fileCategory === "camera") {
+            uploadTargetFile = getCameraFile();
         }
 
         setStatus("uploadStatus", "正在準備上傳...");
@@ -255,7 +382,7 @@ async function uploadFile() {
                 body: JSON.stringify({
                     user_id: user.user_id,
                     course,
-                    file_category: fileCategory,
+                    file_category: uploadCategory,
                     filename: uploadTargetFile.name
                 })
             }
@@ -283,6 +410,7 @@ async function uploadFile() {
         setReviewState("處理中");
         setStatus("uploadStatus", "上傳完成，正在處理內容。", "ok");
         setStatus("reviewStatus", "請稍候，結果會自動更新。");
+        stopCamera();
 
         startOcrPolling();
     } catch (error) {
@@ -378,6 +506,10 @@ document.addEventListener("DOMContentLoaded", () => {
     document.getElementById("refreshOcrBtn").addEventListener("click", pollOcrResult);
     document.getElementById("confirmBtn").addEventListener("click", confirmOcrText);
     document.getElementById("clearCanvasBtn").addEventListener("click", clearHandwritingCanvas);
+    document.getElementById("startCameraBtn").addEventListener("click", startCamera);
+    document.getElementById("capturePhotoBtn").addEventListener("click", capturePhoto);
+    document.getElementById("retakePhotoBtn").addEventListener("click", retakePhoto);
+    window.addEventListener("beforeunload", stopCamera);
 
     initHandwritingCanvas();
     handleCategoryChange();

@@ -280,6 +280,29 @@ button.small {
     justify-content: flex-end;
 }
 
+.camera-area {
+    display: grid;
+    gap: 14px;
+}
+
+.camera-area video,
+.camera-area canvas {
+    width: 100%;
+    aspect-ratio: 16 / 9;
+    display: block;
+    border: 1px solid var(--line);
+    border-radius: 12px;
+    background: #0f172a;
+    object-fit: contain;
+}
+
+.camera-actions {
+    display: flex;
+    justify-content: flex-end;
+    gap: 10px;
+    flex-wrap: wrap;
+}
+
 .status {
     min-height: 24px;
     margin: 14px 0 0;
