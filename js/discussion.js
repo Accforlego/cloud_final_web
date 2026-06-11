@@ -110,7 +110,7 @@ async function loadDiscussionFiles() {
         // ⭐ 有選課程就帶 query
         const url =
             courseId
-                ? `/files?user_id=${encodeURIComponent(user.user_id)}&course_id=${encodeURIComponent(courseId)}`
+                ? `/files?user_id=${encodeURIComponent(user.user_id)}&course=${encodeURIComponent(courseId)}`
                 : `/files?user_id=${encodeURIComponent(user.user_id)}`;
 
 
