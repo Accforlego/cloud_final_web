@@ -1,36 +1,12 @@
-async function getCurrentUser() {
-
-    const session =
-        JSON.parse(localStorage.getItem("examAuthSession"));
-
-    if (!session) return null;
-
-    const claims =
-        decodeJwtPayload(session.id_token);
-
-
-    const data =
-        await data_api(
-            `/users?user_id=${claims.sub}`
-        );
-
-
-    const user = data.users?.[0];
-
-    if (!user) return null;
-
-
-    return {
-        ...user,
-        courses: user.courses?.L?.map(x => x.S) || []
-    };
+function getCurrentUser() {
+    return JSON.parse(localStorage.getItem("examUser") || "null");
 }
 
 function hasCompleteProfile(user) {
     return Boolean(user?.role && user?.courses?.length);
 }
 
-async function requireLogin() {
+function requireLogin() {
     const user = getCurrentUser();
 
     if (!user) {
@@ -60,8 +36,10 @@ async function requireLogin() {
 function logout() {
     const logoutUrl = new URL(`${APP_CONFIG.COGNITO_DOMAIN}/logout`);
 
-    localStorage.removeItem("examUser");
-    localStorage.removeItem("examAuthSession");
+    // localStorage.removeItem("examUser");
+    // localStorage.removeItem("examAuthSession");
+    // localStorage.removeItem("examProfile");
+    localStorage.clear();
 
     logoutUrl.search = new URLSearchParams({
         client_id: APP_CONFIG.COGNITO_CLIENT_ID,
@@ -71,7 +49,7 @@ function logout() {
     window.location.href = logoutUrl.toString();
 }
 
-document.addEventListener("DOMContentLoaded", async () => {
+document.addEventListener("DOMContentLoaded", () => {
     const logoutBtn = document.getElementById("logoutBtn");
 
     if (logoutBtn) {
