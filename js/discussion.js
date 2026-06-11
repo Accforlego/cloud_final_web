@@ -58,9 +58,9 @@ async function loadTAdata() {
         }
     );
 
-    const tacourse = (res.data || []).map(item => item.course_id);
+    tacourse = (res.data || []).map(item => item.course_id);
 
-    console.log("TA courses:", tacourse);
+    // console.log("TA courses:", tacourse);
 }
 
 function renderFilter(userCourses) {
