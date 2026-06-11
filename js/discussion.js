@@ -19,48 +19,99 @@ async function loadDiscussionFiles() {
 }
 
 function renderFiles(files) {
-    const fileList = document.getElementById("fileList");
-    const fileSelect = document.getElementById("fileCourseSelect");
+
+    const fileList =
+        document.getElementById("fileList");
+
+    const fileSelect =
+        document.getElementById("fileCourseSelect");
+
+
     if (!files.length) {
-        fileList.innerHTML = `<div class="empty-state"><p>目前沒有可討論的考古題</p></div>`;
+        fileList.innerHTML =
+        `<div class="empty-state">
+            <p>目前沒有可討論的考古題</p>
+        </div>`;
+
         return;
     }
 
-    fileList.innerHTML = files.map((file) => {
-        const activeClass = file.file_id === selectedFileId ? " is-active" : "";
-        return `
-            <button type="button" class="file-card${activeClass}" data-file-id="${file.file_id}">
-                <strong>${escapeHtml(file.filename || "未命名檔案")}</strong>
-                <span>${escapeHtml(formatCourseName(file.course))}</span>
+
+    fileList.innerHTML =
+        files.map((file) => {
+
+            const activeClass =
+                file.file_id === selectedFileId
+                ? " is-active"
+                : "";
+
+
+            return `
+            <button
+                type="button"
+                class="file-card${activeClass}"
+                data-file-id="${file.file_id}">
+
+                <strong>
+                ${escapeHtml(file.filename || "未命名檔案")}
+                </strong>
+
+                <span>
+                ${escapeHtml(formatCourseName(file.course))}
+                </span>
+
             </button>
-        `;
-    }).join("");
+            `;
+
+        }).join("");
+
+
+
+    // ⭐ 只顯示 user.courses
+    const availableCourses =
+        courses.filter(course =>
+            userCourses.includes(course.course_id)
+        );
+
+
 
     fileSelect.innerHTML =
-    `<option value="">全部課程</option>` +
-    courses.map(course => {
+        `<option value="">
+            全部課程
+        </option>` +
 
-        const id =
-            escapeHtml(course.course_id || "");
+        availableCourses.map(course => {
 
-        const name =
-            escapeHtml(course.course_name || "");
+            const id =
+                escapeHtml(course.course_id || "");
+
+            const name =
+                escapeHtml(course.course_name || "");
 
 
-        return `
-        <option value="${id}">
-            ${id} - ${name}
-        </option>
-        `;
+            return `
+            <option value="${id}">
+                ${id} - ${name}
+            </option>
+            `;
 
-    }).join("");
+        }).join("");
 
-    document.querySelectorAll(".file-card").forEach((button) => {
+
+
+    document
+    .querySelectorAll(".file-card")
+    .forEach(button => {
+
         button.addEventListener("click", () => {
-            loadDiscussionDetail(button.dataset.fileId);
+
+            loadDiscussionDetail(
+                button.dataset.fileId
+            );
+
         });
+
     });
-    
 }
 
 async function loadDiscussionDetail(fileId) {
