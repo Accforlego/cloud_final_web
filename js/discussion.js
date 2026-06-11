@@ -18,9 +18,6 @@ async function loadFilter() {
         const userCourses =
             user.courses || [];
 
-        console.log(allCourses);
-        console.log(userCourses);
-
         const filteredCourses =
             allCourses.filter(course =>
                 userCourses.includes(
@@ -53,14 +50,7 @@ function renderFilter(userCourses) {
 
 
     // 只留下使用者有的課程
-    const availableCourses =
-        courses.filter(course =>
-            userCourses.includes(
-                course.course_id
-            )
-        );
-
-
+    const availableCourses = userCourses;
 
     fileSelect.innerHTML =
         `
