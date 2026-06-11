@@ -11,7 +11,7 @@ function parseCoursesInput(value) {
         .filter(Boolean);
 }
 
-function requireTeacher() {
+async function requireTeacher() {
     const user = await getCurrentUser();
 
     if (!user) {

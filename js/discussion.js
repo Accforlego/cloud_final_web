@@ -196,7 +196,7 @@ async function loadDiscussionDetail(fileId) {
     }
 }
 
-function renderCommentsList() {
+async function renderCommentsList() {
     const commentsList = document.querySelector(".comments-list");
     if (!commentsList) return;
 
