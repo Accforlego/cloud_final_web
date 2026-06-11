@@ -1,6 +1,10 @@
 let selectedFile = null;
 let currentFileId = null;
 let ocrPollTimer = null;
+let handwritingCanvas = null;
+let handwritingCtx = null;
+let isDrawing = false;
+let hasHandwriting = false;
 
 async function getCourses() {
     try {
@@ -53,6 +57,165 @@ function handleFileChange(event) {
         : "尚未選擇檔案";
 }
 
+function handleCategoryChange() {
+    const fileCategory = document.getElementById("fileCategory").value;
+    const fileInput = document.getElementById("fileInput");
+    const fileUploadArea = document.getElementById("fileUploadArea");
+    const handwritingArea = document.getElementById("handwritingArea");
+
+    selectedFile = null;
+    fileInput.value = "";
+    document.getElementById("fileName").textContent = "尚未選擇檔案";
+
+    if (fileCategory === "handwriting") {
+        fileUploadArea.hidden = true;
+        handwritingArea.hidden = false;
+        window.requestAnimationFrame(resizeHandwritingCanvas);
+        return;
+    }
+
+    fileUploadArea.hidden = false;
+    handwritingArea.hidden = true;
+    fileInput.accept = fileCategory === "pdf" ? ".pdf" : ".png,.jpg,.jpeg";
+}
+
+function initHandwritingCanvas() {
+    handwritingCanvas = document.getElementById("handwritingCanvas");
+
+    if (!handwritingCanvas) {
+        return;
+    }
+
+    handwritingCtx = handwritingCanvas.getContext("2d");
+    resizeHandwritingCanvas();
+
+    handwritingCanvas.addEventListener("pointerdown", startDrawing);
+    handwritingCanvas.addEventListener("pointermove", drawHandwriting);
+    handwritingCanvas.addEventListener("pointerup", stopDrawing);
+    handwritingCanvas.addEventListener("pointercancel", stopDrawing);
+    handwritingCanvas.addEventListener("pointerleave", stopDrawing);
+    window.addEventListener("resize", resizeHandwritingCanvas);
+}
+
+function resizeHandwritingCanvas() {
+    if (!handwritingCanvas || !handwritingCtx) {
+        return;
+    }
+
+    const rect = handwritingCanvas.getBoundingClientRect();
+
+    if (!rect.width || !rect.height) {
+        return;
+    }
+
+    const previousDrawing = hasHandwriting ? handwritingCanvas.toDataURL("image/png") : "";
+    const ratio = window.devicePixelRatio || 1;
+
+    handwritingCanvas.width = Math.round(rect.width * ratio);
+    handwritingCanvas.height = Math.round(rect.height * ratio);
+    handwritingCtx.setTransform(ratio, 0, 0, ratio, 0, 0);
+    resetCanvasStyle();
+
+    if (!previousDrawing) {
+        clearHandwritingCanvas();
+        return;
+    }
+
+    const image = new Image();
+    image.onload = () => {
+        handwritingCtx.drawImage(image, 0, 0, rect.width, rect.height);
+    };
+    image.src = previousDrawing;
+}
+
+function resetCanvasStyle() {
+    handwritingCtx.lineWidth = 5;
+    handwritingCtx.lineCap = "round";
+    handwritingCtx.lineJoin = "round";
+    handwritingCtx.strokeStyle = "#111827";
+}
+
+function clearHandwritingCanvas() {
+    if (!handwritingCanvas || !handwritingCtx) {
+        return;
+    }
+
+    const rect = handwritingCanvas.getBoundingClientRect();
+
+    handwritingCtx.save();
+    handwritingCtx.setTransform(1, 0, 0, 1, 0, 0);
+    handwritingCtx.clearRect(0, 0, handwritingCanvas.width, handwritingCanvas.height);
+    handwritingCtx.restore();
+    handwritingCtx.fillStyle = "#ffffff";
+    handwritingCtx.fillRect(0, 0, rect.width, rect.height);
+    resetCanvasStyle();
+    hasHandwriting = false;
+}
+
+function getCanvasPoint(event) {
+    const rect = handwritingCanvas.getBoundingClientRect();
+
+    return {
+        x: event.clientX - rect.left,
+        y: event.clientY - rect.top
+    };
+}
+
+function startDrawing(event) {
+    event.preventDefault();
+    handwritingCanvas.setPointerCapture(event.pointerId);
+    isDrawing = true;
+
+    const point = getCanvasPoint(event);
+    handwritingCtx.beginPath();
+    handwritingCtx.moveTo(point.x, point.y);
+}
+
+function drawHandwriting(event) {
+    if (!isDrawing) {
+        return;
+    }
+
+    event.preventDefault();
+
+    const point = getCanvasPoint(event);
+    handwritingCtx.lineTo(point.x, point.y);
+    handwritingCtx.stroke();
+    hasHandwriting = true;
+}
+
+function stopDrawing(event) {
+    if (!isDrawing) {
+        return;
+    }
+
+    isDrawing = false;
+    handwritingCtx.closePath();
+
+    if (handwritingCanvas.hasPointerCapture(event.pointerId)) {
+        handwritingCanvas.releasePointerCapture(event.pointerId);
+    }
+}
+
+function getHandwritingFile() {
+    return new Promise((resolve, reject) => {
+        if (!hasHandwriting) {
+            reject(new Error("請先在手寫區寫下答案。"));
+            return;
+        }
+
+        handwritingCanvas.toBlob((blob) => {
+            if (!blob) {
+                reject(new Error("無法產生手寫圖片，請再試一次。"));
+                return;
+            }
+
+            const timestamp = new Date().toISOString().replace(/[:.]/g, "-");
+            resolve(new File([blob], `handwriting-answer-${timestamp}.png`, { type: "image/png" }));
+        }, "image/png");
+    });
+}
+
 function setReviewState(label) {
     document.getElementById("reviewBadge").textContent = label;
 }
@@ -61,6 +224,7 @@ async function uploadFile() {
     const user = getCurrentUser();
     const course = document.getElementById("courseSelect").value;
     const fileCategory = document.getElementById("fileCategory").value;
+    let uploadTargetFile = selectedFile;
 
     if (!user) {
         setStatus("uploadStatus", "請先登入。", "err");
@@ -72,12 +236,16 @@ async function uploadFile() {
         return;
     }
 
-    if (!selectedFile) {
+    if (fileCategory !== "handwriting" && !selectedFile) {
         setStatus("uploadStatus", "請選擇檔案。", "err");
         return;
     }
 
     try {
+        if (fileCategory === "handwriting") {
+            uploadTargetFile = await getHandwritingFile();
+        }
+
         setStatus("uploadStatus", "正在準備上傳...");
 
         const uploadData = await data_api(
@@ -88,7 +256,7 @@ async function uploadFile() {
                     user_id: user.user_id,
                     course,
                     file_category: fileCategory,
-                    filename: selectedFile.name
+                    filename: uploadTargetFile.name
                 })
             }
         );
@@ -98,9 +266,9 @@ async function uploadFile() {
             {
                 method: "PUT",
                 headers: {
-                    "Content-Type": uploadData.content_type
+                    "Content-Type": uploadData.content_type || uploadTargetFile.type
                 },
-                body: selectedFile
+                body: uploadTargetFile
             }
         );
 
@@ -205,9 +373,13 @@ document.addEventListener("DOMContentLoaded", () => {
     }
 
     document.getElementById("fileInput").addEventListener("change", handleFileChange);
+    document.getElementById("fileCategory").addEventListener("change", handleCategoryChange);
     document.getElementById("uploadBtn").addEventListener("click", uploadFile);
     document.getElementById("refreshOcrBtn").addEventListener("click", pollOcrResult);
     document.getElementById("confirmBtn").addEventListener("click", confirmOcrText);
+    document.getElementById("clearCanvasBtn").addEventListener("click", clearHandwritingCanvas);
 
+    initHandwritingCanvas();
+    handleCategoryChange();
     renderCourseOptions();
 });

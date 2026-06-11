@@ -45,9 +45,18 @@
                 </label>
             </div>
 
-            <div class="upload-box">
-                <input id="fileInput" type="file" accept=".png,.jpg,.jpeg,.pdf">
-                <p id="fileName">尚未選擇檔案</p>
+            <div class="upload-box" id="uploadBox">
+                <div id="fileUploadArea">
+                    <input id="fileInput" type="file" accept=".png,.jpg,.jpeg,.pdf">
+                    <p id="fileName">尚未選擇檔案</p>
+                </div>
+
+                <div class="handwriting-area" id="handwritingArea" hidden>
+                    <canvas id="handwritingCanvas" aria-label="手寫答案區"></canvas>
+                    <div class="handwriting-actions">
+                        <button type="button" class="button ghost small" id="clearCanvasBtn">清除</button>
+                    </div>
+                </div>
             </div>
 
             <button type="button" class="button primary" id="uploadBtn">上傳並辨識</button>
