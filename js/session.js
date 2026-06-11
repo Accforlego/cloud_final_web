@@ -30,7 +30,7 @@ function hasCompleteProfile(user) {
     return Boolean(user?.role && user?.courses?.length);
 }
 
-function requireLogin() {
+async function requireLogin() {
     const user = getCurrentUser();
 
     if (!user) {
@@ -71,7 +71,7 @@ function logout() {
     window.location.href = logoutUrl.toString();
 }
 
-document.addEventListener("DOMContentLoaded", () => {
+document.addEventListener("DOMContentLoaded", async () => {
     const logoutBtn = document.getElementById("logoutBtn");
 
     if (logoutBtn) {
