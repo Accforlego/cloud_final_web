@@ -19,6 +19,11 @@ async function loadDiscussionFiles() {
 }
 
 function renderFiles(files) {
+    const authSession =
+    JSON.parse(localStorage.getItem("examAuthSession") || "null");
+
+    const userCourses =
+        authSession?.user?.courses || [];
 
     const fileList =
         document.getElementById("fileList");
