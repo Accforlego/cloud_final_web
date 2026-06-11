@@ -13,11 +13,15 @@ async function loadFilter() {
         const allCourses =
             data.courses || [];
         
-
-        const userCourses =
+        const userCoursesRaw =
             user.courses || [];
+        const userCourses =
+            Array.isArray(userCoursesRaw?.L)
+                ? userCoursesRaw.L.map(x => x.S)
+                : userCoursesRaw;
 
-        console.log(allCourses, userCourses);
+
+        // console.log(allCourses, userCourses);
 
         const filteredCourses =
             allCourses.filter(course =>
