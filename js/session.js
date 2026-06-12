@@ -43,6 +43,7 @@ function hasCompleteProfile(user) {
 async function requireLogin() {
 
     const user = await getCurrentUser(); // ⭐ 改成一定從 API 拿最新
+    console.log(user);
 
     if (!user) {
         window.location.href = "index.html";
