@@ -13,7 +13,7 @@ async function loadMyFiles() {
         fileList.innerHTML = "<p class='muted'>載入中...</p>";
 
         const data = await data_api(
-            `/files?user_id=${encodeURIComponent(user.user_id)}`
+            `/files?user_id=${encodeURIComponent(user.user_id)}&uploaded_by=${user.user_id}`
         );
 
         renderFiles(data.files || []);
