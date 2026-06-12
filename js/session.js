@@ -51,20 +51,15 @@ async function requireLogin() {
     const user = await getCurrentUser(); // ⭐ 改成一定從 API 拿最新
     // console.log(user);
 
-    if (!user) {
-        window.location.href = "index.html";
+    // ❗ profile incomplete → 強制導向
+    if (page !== "profile.html" && !hasCompleteProfile(user)) {
+        window.location.href = "profile.html";
         return null;
     }
 
     const page =
         window.location.pathname.split("/").pop() || "index.html";
 
-
-    // ❗ profile incomplete → 強制導向
-    if (page !== "profile.html" && !hasCompleteProfile(user)) {
-        window.location.href = "profile.html";
-        return null;
-    }
 
 
     // ⭐ 更新 local cache（可選）
