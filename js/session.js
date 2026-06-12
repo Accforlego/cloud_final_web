@@ -1,10 +1,35 @@
 async function getCurrentUser() {
+    const session =
+        JSON.parse(localStorage.getItem("examAuthSession") || "null");
+
+    if (!session) return null;
+
+    let claims;
+
     try {
-        const session = JSON.parse(localStorage.getItem("examAuthSession"));
-        const claims = decodeJwtPayload(session.id_token);
+        claims = decodeJwtPayload(session.id_token);
+    } catch {
+        return null;
+    }
+
+    // ⭐ 1. 先從 Cognito 拿基本資料（一定有）
+    const baseUser = {
+        user_id: claims.sub,
+        sub: claims.sub,
+        name: claims.name || claims.email || claims["cognito:username"],
+        email: claims.email || "",
+        role: claims["custom:role"] || "",
+        courses: claims["custom:courses"]
+            ? claims["custom:courses"].split(",")
+            : []
+    };
+
+    try {
+        // const session = JSON.parse(localStorage.getItem("examAuthSession"));
+        // const claims = decodeJwtPayload(session.id_token);
         
-        const data = await data_api(`/users?user_id=${claims.sub}`);
-        return data.users[0];
+        const data = await data_api(`/users?user_id=${claims.sub}`).users[0];
+        return !data ? baseUser : normalizeUser({;
     } catch (error) {
         console.error("Error getting current user:", error);
         // window.location.href = "index.html";
