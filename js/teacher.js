@@ -968,6 +968,11 @@ async function initializeTeacherPage() {
         loadFiles();
 
     });
+    document.getElementById("reloadTAListBtn").addEventListener("click", () => {
+
+        loadTAs();
+
+    });
 }
 
 document.addEventListener("DOMContentLoaded", initializeTeacherPage);
