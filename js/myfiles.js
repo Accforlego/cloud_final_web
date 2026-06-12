@@ -120,7 +120,7 @@ async function deleteFile(fileId) {
     }
 
     try {
-        await data_api("/file", {
+        await data_api("/files", {
             method: "DELETE",
             body: JSON.stringify({
                 user_id: user.user_id,
