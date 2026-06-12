@@ -123,7 +123,7 @@ async function deleteFile(fileId) {
         await data_api("/files", {
             method: "DELETE",
             body: JSON.stringify({
-                user_id: user.user_id,
+                requester_id: user.user_id,
                 file_id: fileId
             })
         });
