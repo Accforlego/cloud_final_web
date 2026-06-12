@@ -21,8 +21,8 @@ async function getCurrentUser() {
 
     try {
         
-        const data = await data_api(`/users?user_id=${claims.sub}`).users[0];
-        return !data ? baseUser : data;
+        const data = await data_api(`/users?user_id=${claims.sub}`);
+        return !data ? baseUser : data.users[0];
     } catch (error) {
         console.error("Error getting current user:", error);
         // window.location.href = "index.html";
