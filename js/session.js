@@ -25,8 +25,6 @@ async function getCurrentUser() {
         };
         return baseUser;
     }
-
-    // ⭐ 1. 先從 Cognito 拿基本資料（一定有）
     
 
     try {

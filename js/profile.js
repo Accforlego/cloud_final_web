@@ -61,6 +61,50 @@ async function saveProfile() {
     }
 }
 
+async function loadCourseCheckboxes(selectedCourses = []) {
+
+    const container =
+        document.getElementById("courseCheckboxList");
+
+    try {
+
+        const data =
+            await data_api("/courses");
+
+        const courses =
+            data.courses || [];
+
+        container.innerHTML = courses.map(course => {
+
+            const id = course.course_id || "";
+            const name = course.course_name || "";
+
+            const checked =
+                selectedCourses.includes(id)
+                    ? "checked"
+                    : "";
+
+            return `
+                <label class="choice-row">
+                    <input type="checkbox"
+                           name="course"
+                           value="${id}"
+                           ${checked}>
+                    <span>${name}</span>
+                </label>
+            `;
+
+        }).join("");
+
+    } catch (err) {
+
+        console.error("load courses failed:", err);
+
+        container.innerHTML =
+            "<p>無法載入課程</p>";
+    }
+}
+
 document.addEventListener("DOMContentLoaded", async () => {
     user = await requireLogin();
 
@@ -70,5 +114,6 @@ document.addEventListener("DOMContentLoaded", async () => {
 
     document.getElementById("roleSelect").value = user.role || "student";
     setSelectedCourses(user.courses || []);
+    await loadCourseCheckboxes(user.courses || []);
     document.getElementById("saveProfileBtn").addEventListener("click", saveProfile);
 });
