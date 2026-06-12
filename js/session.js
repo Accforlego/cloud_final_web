@@ -7,7 +7,7 @@ async function getCurrentUser() {
         return data.users[0];
     } catch (error) {
         console.error("Error getting current user:", error);
-        window.location.href = "index.html";
+        // window.location.href = "index.html";
         return null;
     }
 }

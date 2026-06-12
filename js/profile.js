@@ -62,11 +62,11 @@ async function saveProfile() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    user = await getCurrentUser();
+    user = await requireLogin();
 
-    // if (!user) {
-    //     return;
-    // }
+    if (!user) {
+        return;
+    }
 
     document.getElementById("roleSelect").value = user.role || "student";
     setSelectedCourses(user.courses || []);
