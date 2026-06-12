@@ -97,14 +97,14 @@ function renderFileDetail(file, text) {
             <span>上傳者：${escapeHtml(file.uploaded_by || "未知")}</span>
             <span>確認時間：${escapeHtml(formatDate(file.confirmed_at))}</span>
         </div>
-        <button
+        <div class="detail-text">${escapeHtml(text || "沒有文字內容")}</div>
+         <button
             type="button"
             class="button danger"
             onclick="deleteFile('${file.file_id}')"
         >
             刪除
         </button>
-        <div class="detail-text">${escapeHtml(text || "沒有文字內容")}</div>
     `;
 }
 
