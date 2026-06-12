@@ -80,7 +80,7 @@ function renderFilter(userCourses) {
     fileSelect.innerHTML =
         `
         <option value="">
-            全部課程
+            請選擇一個課程
         </option>
         `
 
