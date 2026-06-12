@@ -97,9 +97,44 @@ function renderFileDetail(file, text) {
             <span>上傳者：${escapeHtml(file.uploaded_by || "未知")}</span>
             <span>確認時間：${escapeHtml(formatDate(file.confirmed_at))}</span>
         </div>
-
+        <button
+            type="button"
+            class="button danger"
+            onclick="deleteFile('${file.file_id}')"
+        >
+            刪除
+        </button>
         <div class="detail-text">${escapeHtml(text || "沒有文字內容")}</div>
     `;
+}
+
+async function deleteFile(fileId) {
+    if (!confirm("確定要刪除這個檔案嗎？")) {
+        return;
+    }
+
+    // const user = await getCurrentUser();
+
+    if (!user) {
+        return;
+    }
+
+    try {
+        await data_api("/file", {
+            method: "DELETE",
+            body: JSON.stringify({
+                user_id: user.user_id,
+                file_id: fileId
+            })
+        });
+
+        setStatus("filesStatus", "檔案已刪除");
+        selectedFileId = null;
+        loadMyFiles();
+        document.getElementById("fileDetail").innerHTML = "";
+    } catch (error) {
+        setStatus("filesStatus", error.message, "err");
+    }
 }
 
 document.addEventListener("DOMContentLoaded", async () => {

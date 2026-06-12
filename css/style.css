@@ -830,6 +830,17 @@ button.danger:hover {
     background: #912018;
 }
 
+.button.success,
+button.success {
+    color: #ffffff;
+    background: var(--success);
+}
+
+.button.success:hover,
+button.success:hover {
+    background: #912018;
+}
+
 .button:disabled,
 button:disabled {
     cursor: not-allowed;
