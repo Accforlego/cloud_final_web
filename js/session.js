@@ -1,9 +1,15 @@
 async function getCurrentUser() {
-    const session = JSON.parse(localStorage.getItem("examAuthSession"));
-    const claims = decodeJwtPayload(session.id_token);
-
-    const data = await data_api(`/users?user_id=${claims.sub}`);
-    return data.users[0];
+    try {
+        const session = JSON.parse(localStorage.getItem("examAuthSession"));
+        const claims = decodeJwtPayload(session.id_token);
+        
+        const data = await data_api(`/users?user_id=${claims.sub}`);
+        return data.users[0];
+    } catch (error) {
+        console.error("Error getting current user:", error);
+        window.location.href = "index.html";
+        return null;
+    }
 }
 
 function decodeJwtPayload(token) {
@@ -43,7 +49,7 @@ function hasCompleteProfile(user) {
 async function requireLogin() {
 
     const user = await getCurrentUser(); // ⭐ 改成一定從 API 拿最新
-    console.log(user);
+    // console.log(user);
 
     if (!user) {
         window.location.href = "index.html";
