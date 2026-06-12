@@ -62,7 +62,7 @@ async function saveProfile() {
 }
 
 document.addEventListener("DOMContentLoaded", async () => {
-    user = await getCurrentUser();
+    user = await requireLogin();
 
     if (!user) {
         return;
