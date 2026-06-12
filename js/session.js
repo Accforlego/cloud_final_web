@@ -12,22 +12,26 @@ async function getCurrentUser() {
         return null;
     }
 
-    console.log("Decoded JWT claims:", claims);
+    // console.log("Decoded JWT claims:", claims);
+    const page =
+    window.location.pathname.split("/").pop() || "index.html";
+
+    // ❗ profile incomplete → 強制導向
+    if (page === "profile.html" ) {
+        const baseUser = {
+            user_id: claims.sub,
+            name: claims.preferred_username,
+            email: claims.email
+        };
+        return baseUser;
+    }
 
     // ⭐ 1. 先從 Cognito 拿基本資料（一定有）
-    const baseUser = {
-        user_id: claims.sub,
-        name: claims.preferred_username,
-        email: claims.email
-    };
+    
 
     try {
         
         const data = await data_api(`/users?user_id=${claims.sub}`);
-        if (!data) {
-            console.warn("No data returned from /users API");
-            return baseUser; // 至少回傳基本資料
-        }
         return data.users[0];
     } catch (error) {
         console.error("Error getting current user:", error);
@@ -74,15 +78,14 @@ async function requireLogin() {
 
     const user = await getCurrentUser(); // ⭐ 改成一定從 API 拿最新
     // console.log(user);
-
+    const page =
+        window.location.pathname.split("/").pop() || "index.html";
+    
     // ❗ profile incomplete → 強制導向
     if (page !== "profile.html" && !hasCompleteProfile(user)) {
         window.location.href = "profile.html";
         return null;
     }
-
-    const page =
-        window.location.pathname.split("/").pop() || "index.html";
 
 
 
