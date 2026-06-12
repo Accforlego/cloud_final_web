@@ -149,6 +149,13 @@ document.addEventListener("DOMContentLoaded", async () => {
         navpage.innerHTML += `<a class="nav-link" href="teacher.html">教師管理</a>`;
     }
 
-    document.getElementById("reloadFilesBtn").addEventListener("click", loadMyFiles);
+    document.getElementById("reloadFilesBtn")
+    .addEventListener("click", async () => {
+        await loadMyFiles();
+
+        if (selectedFileId) {
+            await loadFileDetail(selectedFileId);
+        }
+    });
     loadMyFiles();
 });
