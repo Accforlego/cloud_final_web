@@ -17,14 +17,18 @@ async function getCurrentUser() {
     // ⭐ 1. 先從 Cognito 拿基本資料（一定有）
     const baseUser = {
         user_id: claims.sub,
-        name: claims.name || claims.email || claims["cognito:username"],
-        email: claims.email || "",
+        name: claims.preferred_username,
+        email: claims.email
     };
 
     try {
         
         const data = await data_api(`/users?user_id=${claims.sub}`);
-        return !data ? baseUser : data.users[0];
+        if (!data) {
+            console.warn("No data returned from /users API");
+            return baseUser; // 至少回傳基本資料
+        }
+        return data.users[0];
     } catch (error) {
         console.error("Error getting current user:", error);
         // window.location.href = "index.html";
